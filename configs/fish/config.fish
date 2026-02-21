@@ -12,20 +12,18 @@ starship init fish | source
 # ═══════════════════════════════════════════════════════════════════════════════
 # ZOXIDE - Smart cd with frecency (Layer 2)
 # ═══════════════════════════════════════════════════════════════════════════════
-# Uncomment after installing Layer 2: ./scripts/install-layer-2.sh
-# zoxide init fish | source
+zoxide init fish | source
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ATUIN - SQLite history with sync (Layer 2)
 # ═══════════════════════════════════════════════════════════════════════════════
-# Uncomment after installing Layer 2: ./scripts/install-layer-2.sh
-# atuin init fish --disable-up-arrow | source
+set -gx PATH $HOME/.atuin/bin $PATH
+atuin init fish --disable-up-arrow | source
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # FZF - Fuzzy finder integration (Layer 2)
 # ═══════════════════════════════════════════════════════════════════════════════
-# Uncomment after installing Layer 2: ./scripts/install-layer-2.sh
-# fzf --fish | source
+fzf --fish | source
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ENVIRONMENT VARIABLES

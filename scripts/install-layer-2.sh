@@ -126,7 +126,7 @@ fi
 log_info "Installing watchexec..."
 
 if ! command_exists watchexec; then
-    cargo install watchexec
+    cargo install watchexec-cli
     log_success "watchexec installed"
 else
     log_info "watchexec already installed"
