@@ -121,8 +121,15 @@ fi
 
 # Copy Starship config
 if [ -f "$PROJECT_DIR/configs/starship/starship.toml" ]; then
-    cp "$PROJECT_DIR/configs/starship/starship.toml" ~/.config/starship.toml
-    log_success "Starship config applied"
+    # Validate no duplicate sections before copying
+    DUPLICATES=$(awk '/^\[/{if(seen[$0]++)print}' "$PROJECT_DIR/configs/starship/starship.toml")
+    if [ -n "$DUPLICATES" ]; then
+        log_warn "Starship config has duplicate sections: $DUPLICATES"
+        log_warn "Please fix the config file before proceeding"
+    else
+        cp "$PROJECT_DIR/configs/starship/starship.toml" ~/.config/starship.toml
+        log_success "Starship config applied"
+    fi
 else
     log_warn "Starship config not found at $PROJECT_DIR/configs/starship/starship.toml"
 fi
@@ -144,6 +151,15 @@ echo "Configs:"
 [ -f ~/.wezterm.lua ] && echo "  ✅ ~/.wezterm.lua" || echo "  ❌ ~/.wezterm.lua"
 [ -f ~/.config/fish/config.fish ] && echo "  ✅ ~/.config/fish/config.fish" || echo "  ❌ ~/.config/fish/config.fish"
 [ -f ~/.config/starship.toml ] && echo "  ✅ ~/.config/starship.toml" || echo "  ❌ ~/.config/starship.toml"
+
+# Validate starship config
+if command_exists starship && [ -f ~/.config/starship.toml ]; then
+    if starship --version &>/dev/null; then
+        echo "  ✅ Starship config is valid"
+    else
+        echo "  ⚠️  Starship config has errors - check ~/.config/starship.toml"
+    fi
+fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # COMPLETE

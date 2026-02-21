@@ -40,7 +40,17 @@ log_info "Running preflight checks..."
 if ! command_exists cargo; then
     log_warn "cargo not found. Installing rust..."
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    source "$HOME/.cargo/env"
+    # Source cargo env for current session
+    if [ -f "$HOME/.cargo/env" ]; then
+        . "$HOME/.cargo/env"
+    fi
+fi
+
+# Verify cargo is available after potential install
+if ! command_exists cargo; then
+    log_error "cargo still not available after rust installation"
+    log_error "Please run: source \$HOME/.cargo/env && ./scripts/install-layer-1.sh"
+    exit 1
 fi
 
 log_success "Preflight checks passed"
