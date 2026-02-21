@@ -1,4 +1,4 @@
-# Layer 3: GitHub & Git
+# Layer 3: GitHub & Git - Complete Guide
 
 > Complete git and GitHub automation without leaving terminal
 
@@ -8,37 +8,48 @@ This layer provides full GitHub functionality in the terminal, plus enhanced git
 
 ## Tools
 
-| Tool | Score | Purpose |
-|------|-------|---------|
+| Tool | Context7 Score | Purpose |
+|------|----------------|---------|
 | **gh CLI** | 83.2 | Complete GitHub control in terminal |
 | **lazygit** | 46 | Visual git UI for staging, commits, pushes |
-| **delta** | - | Beautiful git diffs with syntax highlighting |
-| **CodeQL** | 73.9 | Semantic code analysis for security |
-| **Greptile** | 60 | AI code review for pull requests |
+| **delta** | N/A | Beautiful git diffs with syntax highlighting |
 
 ## Installation
+
+### Quick Install
+
+```bash
+./scripts/install-layer-3.sh
+```
+
+### Manual Installation
 
 ```bash
 # gh CLI (83.2) - GitHub in terminal
 sudo apt install -y gh
-# Or: brew install gh
 
 # Authenticate
 gh auth login
 
-# lazygit (46) - Git TUI
-sudo apt install -y lazygit
-# Or: brew install lazygit
+# lazygit (46) - Git TUI (download latest binary)
+LAZYGIT_VERSION=$(curl -s https://api.github.com/repos/jesseduffield/lazygit/releases/latest | grep -oP '"tag_name": "\K[^"]+')
+curl -sL "https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION#v}_Linux_x86_64.tar.gz" | tar xz
+mv lazygit ~/.local/bin/
 
-# delta - Git diff viewer (already installed in many setups)
+# delta - Git diff viewer
 cargo install git-delta
+
+# Catppuccin theme for bat (required for delta)
+mkdir -p "$(bat --config-dir)/themes"
+curl -sL "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme" -o "$(bat --config-dir)/themes/Catppuccin Mocha.tmTheme"
+bat cache --build
 
 # Configure git to use delta
 git config --global core.pager "delta"
-git config --global interactive.diffFilter "delta --color-only"
+git config --global delta.line-numbers true
+git config --global delta.side-by-side true
+git config --global delta.syntax-theme "Catppuccin Mocha"
 git config --global delta.navigate true
-git config --global merge.conflictstyle diff3
-git config --global diff.colorMoved default
 ```
 
 ## gh CLI Usage
