@@ -144,6 +144,23 @@ config.unix_domains = {
 config.default_gui_startup_args = { 'connect', 'unix' }
 ```
 
+### Appearance Configuration
+
+The config uses modern integrated buttons for a VS Code/Chrome-like experience:
+
+```lua
+-- Window decorations: integrated buttons in tab bar
+config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
+config.use_fancy_tab_bar = true
+config.hide_tab_bar_if_only_one_tab = false
+config.show_new_tab_button_in_tab_bar = true
+```
+
+**Alternative options for `window_decorations`:**
+- `'TITLE | RESIZE'` - Classic title bar with window buttons
+- `'RESIZE'` - No decorations, only resize borders
+- `'NONE'` - No decorations at all
+
 ---
 
 ## Fish Shell Configuration
