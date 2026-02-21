@@ -173,32 +173,10 @@ else
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# UPDATE FISH CONFIG - Uncomment Layer 2 tools
+# FISH CONFIG - No changes needed (conditional sourcing)
 # ═══════════════════════════════════════════════════════════════════════════════
-log_info "Updating Fish config..."
-
-FISH_CONFIG="$HOME/.config/fish/config.fish"
-
-if [ -f "$FISH_CONFIG" ]; then
-    # Uncomment zoxide
-    if grep -q "^# zoxide init fish | source" "$FISH_CONFIG" 2>/dev/null; then
-        sed -i 's/^# zoxide init fish | source/zoxide init fish | source/' "$FISH_CONFIG"
-        log_success "zoxide enabled in Fish config"
-    fi
-
-    # Uncomment atuin (PATH line + init line)
-    if grep -q "^# set -gx PATH \$HOME/.atuin/bin \$PATH" "$FISH_CONFIG" 2>/dev/null; then
-        sed -i 's/^# set -gx PATH \$HOME\/.atuin\/bin \$PATH/set -gx PATH $HOME\/.atuin\/bin $PATH/' "$FISH_CONFIG"
-        sed -i 's/^# atuin init fish --disable-up-arrow | source/atuin init fish --disable-up-arrow | source/' "$FISH_CONFIG"
-        log_success "atuin enabled in Fish config"
-    fi
-
-    # Uncomment fzf
-    if grep -q "^# fzf --fish | source" "$FISH_CONFIG" 2>/dev/null; then
-        sed -i 's/^# fzf --fish | source/fzf --fish | source/' "$FISH_CONFIG"
-        log_success "fzf enabled in Fish config"
-    fi
-fi
+log_info "Fish config uses conditional sourcing - no changes needed"
+log_info "Tools will be auto-detected on next shell startup"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # VERIFICATION

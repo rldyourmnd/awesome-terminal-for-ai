@@ -210,19 +210,49 @@ config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 
 ## Fish Shell Configuration
 
+### Key Features
+
+- **Conditional sourcing** - Tools only initialized if installed (`if type -q`)
+- **fish_add_path** - Proper PATH persistence without duplication
+- **~30ms startup** - Benchmark with `fish --profile-startup /tmp/fish.prof -ic exit`
+- **Transient prompt ready** - Cleaner scrollback (optional)
+
 ### Initialization Order
 
-The config.fish initializes tools in this order:
+Tools are initialized with conditional checks for stability:
 
-1. **Starship** - Prompt (must be first)
-2. **Zoxide** - Smart cd (Layer 2)
-3. **Atuin** - History sync (Layer 2) - PATH set BEFORE init
-4. **fzf** - Fuzzy finder (Layer 2)
-
-**Important:** Atuin must be added to PATH before initialization:
 ```fish
-set -gx PATH $HOME/.atuin/bin $PATH
-atuin init fish --disable-up-arrow | source
+# Only source if tool is installed
+if type -q starship
+    starship init fish | source
+end
+
+if type -q zoxide
+    zoxide init fish | source
+end
+
+if type -q atuin
+    atuin init fish --disable-up-arrow | source
+end
+
+if type -q fzf
+    fzf --fish | source
+end
+```
+
+**Why conditional sourcing?**
+- No errors if tools not installed yet
+- Works immediately after fresh install
+- Graceful degradation
+
+### PATH Management
+
+Use `fish_add_path` for persistence (added to universal variables):
+
+```fish
+fish_add_path ~/.local/bin        # AI tools
+fish_add_path ~/.cargo/bin        # Rust tools
+fish_add_path ~/.atuin/bin        # Atuin
 ```
 
 ### Key Abbreviations
@@ -251,7 +281,24 @@ atuin init fish --disable-up-arrow | source
 | ga | git add |
 | gc | git commit |
 | gp | git push |
+| gl | git log --oneline -10 |
+| gd | git diff |
 | lg | lazygit |
+
+**GitHub CLI:**
+| Abbr | Command |
+|------|---------|
+| gh | gh |
+| ghp | gh pr |
+| ghi | gh issue |
+| ghr | gh repo |
+
+**AI Tools (Layer 5):**
+| Abbr | Command |
+|------|---------|
+| cl | claude |
+| gem | gemini |
+| cx | codex |
 
 ### Custom Functions
 
