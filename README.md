@@ -64,10 +64,12 @@ cd better-ai-usage
 ./scripts/install.sh
 
 # Or install layer by layer
-./scripts/install-layer-1-file-ops.sh
-./scripts/install-layer-2-productivity.sh
-./scripts/install-layer-3-github.sh
-./scripts/install-layer-4-code-intelligence.sh
+./scripts/install-foundation.sh
+./scripts/install-layer-1.sh
+./scripts/install-layer-2.sh
+./scripts/install-layer-3.sh
+./scripts/install-layer-4.sh
+./scripts/install-layer-5.sh
 ```
 
 ## Layers Detail
@@ -125,13 +127,13 @@ AI-ready code analysis and search tools.
 
 ### Layer 5: AI Orchestration
 
-User-provided AI CLI tools for multi-model workflows.
+AI CLI tools for multi-model workflows (Context7 verified February 2026).
 
-| Tool | Purpose |
-|------|---------|
-| claude CLI | Anthropic Claude integration |
-| gemini CLI | Google Gemini integration |
-| codex CLI | OpenAI Codex integration |
+| Tool | Score | Purpose |
+|------|-------|---------|
+| claude CLI | 80.6 | Anthropic Claude - deep reasoning, code generation |
+| gemini CLI | 78.2 | Google Gemini - fast exploration, research |
+| codex CLI | 56.9 | OpenAI Codex - independent review, critique |
 
 ## Foundation
 
@@ -176,11 +178,12 @@ better-ai-usage/
 │   └── starship/
 │       └── starship.toml
 ├── scripts/
-│   ├── install.sh
-│   ├── install-layer-1-file-ops.sh
-│   ├── install-layer-2-productivity.sh
-│   ├── install-layer-3-github.sh
-│   └── install-layer-4-code-intelligence.sh
+│   ├── install-foundation.sh
+│   ├── install-layer-1.sh
+│   ├── install-layer-2.sh
+│   ├── install-layer-3.sh
+│   ├── install-layer-4.sh
+│   └── install-layer-5.sh
 └── research/
     └── context7-analysis.md
 ```
