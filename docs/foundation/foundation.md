@@ -380,6 +380,35 @@ source ~/.bashrc                    # bash
 source ~/.zshrc                     # zsh
 ```
 
+#### 9. Starship: "TOML parse error ... duplicate key"
+
+**Error:**
+```
+[ERROR] - (starship::config): Unable to parse the config file: TOML parse error at line 154, column 2
+    |
+154 | [jobs]
+    |  ^^^^
+duplicate key
+```
+
+**Cause:** Duplicate section headers in starship.toml (e.g., two `[jobs]` or `[gcloud]` sections).
+
+**Solution:**
+1. Find duplicates:
+```bash
+awk '/^\[/{if(seen[$0]++)print NR": "$0}' ~/.config/starship.toml
+```
+
+2. Remove the duplicate section manually or re-download the config:
+```bash
+cp /path/to/project/configs/starship/starship.toml ~/.config/starship.toml
+```
+
+3. Verify:
+```bash
+starship --version
+```
+
 ---
 
 ## Verification
