@@ -1,89 +1,178 @@
 # Contributing to Better Terminal Usage
 
-Thank you for your interest in contributing! This project aims to provide the most optimized terminal environment for modern development workflows.
+First off, thank you for considering contributing to Better Terminal Usage! 🎉
 
-## Ways to Contribute
+## 📜 Table of Contents
 
-### 1. Report Issues
+- [Code of Conduct](#code-of-conduct)
+- [How Can I Contribute?](#how-can-i-contribute)
+- [Development Setup](#development-setup)
+- [Pull Request Guidelines](#pull-request-guidelines)
+- [Coding Standards](#coding-standards)
+- [Tool Evaluation Criteria](#tool-evaluation-criteria)
 
-- Use the [issue tracker](https://github.com/rldyourmnd/better-terminal-usage/issues)
-- Check for existing issues before creating new ones
-- Provide detailed reproduction steps
+## 🤝 Code of Conduct
 
-### 2. Suggest New Tools
+This project and everyone participating in it is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
-- Open an issue with the `tool-suggestion` label
-- Include benchmark score if available
-- Explain the benefit for developer workflows
+## 🔧 How Can I Contribute?
 
-### 3. Improve Documentation
+### Report Bugs
 
-- Fix typos or unclear instructions
-- Add examples and use cases
-- Translate documentation
+Before creating bug reports, please check the [existing issues](https://github.com/rldyourmnd/better-terminal-usage/issues) as your issue might have already been reported.
 
-### 4. Submit Configuration Improvements
+When you are creating a bug report, please include as many details as possible:
 
-- Fork the repository
-- Create a feature branch
-- Submit a pull request
+- **Use a clear and descriptive title**
+- **Describe the exact steps to reproduce the problem**
+- **Provide specific examples to demonstrate the steps**
+- **Describe the behavior you observed and expected**
+- **Include your environment details** (OS, shell, terminal)
 
-## Development Setup
+### Suggest Enhancements
+
+Enhancement suggestions are tracked as [GitHub issues](https://github.com/rldyourmnd/better-terminal-usage/issues). When creating an enhancement suggestion, include:
+
+- **Use a clear and descriptive title**
+- **Provide a step-by-step description of the suggested enhancement**
+- **Provide specific examples to demonstrate the steps**
+- **Describe the current behavior and explain the expected behavior**
+- **Explain why this enhancement would be useful**
+
+### Pull Requests
+
+- Fill in the required template
+- Do not include issue numbers in the PR title
+- Include screenshots and animated GIFs in your pull request whenever possible
+- Follow the coding standards
+- Document new code
+
+## 🛠️ Development Setup
 
 ```bash
+# Fork the repository on GitHub
 # Clone your fork
 git clone https://github.com/YOUR_USERNAME/better-terminal-usage.git
 cd better-terminal-usage
 
-# Create a branch
-git checkout -b feature/your-feature
+# Create a branch for your changes
+git checkout -b feature/your-feature-name
 
-# Make changes and commit
+# Make your changes
+# Test your changes
+
+# Commit your changes
 git add .
-git commit -m "feat: your feature description"
+git commit -m "feat: description of your changes"
 
-# Push and create PR
-git push origin feature/your-feature
+# Push to your fork
+git push origin feature/your-feature-name
+
+# Create a Pull Request on GitHub
 ```
 
-## Pull Request Guidelines
+## 📋 Pull Request Guidelines
 
-1. **One feature per PR** - Keep changes focused
+1. **One feature per PR** - Keep changes focused and reviewable
 2. **Test your changes** - Verify scripts work on fresh systems
 3. **Update documentation** - Keep README and docs current
 4. **Follow conventions** - Match existing code style
+5. **Write clear commit messages** - Use conventional commits format
 
-## Code Style
+### Commit Message Format
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+type(scope): description
+
+[optional body]
+```
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, semicolons, etc.)
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
+
+**Examples:**
+```
+feat(layer-2): add hyperfine benchmarking tool
+fix(foundation): correct WezTerm config path
+docs(readme): update installation instructions
+```
+
+## 📏 Coding Standards
 
 ### Shell Scripts
 
-- Use `#!/usr/bin/env bash` shebang
-- Enable strict mode: `set -euo pipefail`
-- Add comments for complex operations
-- Use meaningful variable names
+```bash
+#!/usr/bin/env bash
+# ═══════════════════════════════════════════════════════════════════════════════
+# SCRIPT NAME
+# ═══════════════════════════════════════════════════════════════════════════════
+# Description of what this script does
+# Run: ./scripts/script-name.sh
+
+set -euo pipefail  # Always use strict mode
+
+# Use meaningful variable names
+TOOL_NAME="example"
+
+# Use functions with clear names
+install_tool() {
+    # Implementation
+}
+
+# Logging pattern
+log_info() { echo -e "[INFO] $1"; }
+log_success() { echo -e "[SUCCESS] $1"; }
+log_error() { echo -e "[ERROR] $1"; }
+```
 
 ### Configuration Files
 
 - Include comments explaining options
 - Follow tool-specific conventions
 - Keep minimal but complete
+- Use visual section separators
 
-## Tool Evaluation Criteria
+### Documentation
 
-When suggesting new tools, consider:
+- Use clear, concise language
+- Include code examples
+- Update table of contents when adding sections
+- Add proper markdown formatting
 
-| Criterion | Weight |
-|-----------|--------|
-| Performance (benchmark) | 40% |
-| Developer compatibility | 25% |
-| Documentation quality | 15% |
-| Active maintenance | 10% |
-| Community adoption | 10% |
+## 📊 Tool Evaluation Criteria
 
-## Questions?
+When suggesting new tools, consider these criteria:
 
-Open an issue with the `question` label or start a discussion.
+| Criterion | Weight | Description |
+|-----------|--------|-------------|
+| Performance | 40% | Benchmark scores and actual speed improvements |
+| Developer Experience | 25% | Usability, documentation, learning curve |
+| Documentation | 15% | Quality of official docs and community resources |
+| Maintenance | 10% | Active development, recent releases |
+| Community | 10% | Stars, forks, community size |
 
-## License
+### Evaluation Process
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+1. **Research**: Check benchmarks, documentation, GitHub stars
+2. **Test**: Install and use the tool in daily workflow
+3. **Compare**: Evaluate against existing alternatives
+4. **Document**: Add to appropriate layer with clear usage examples
+
+## ❓ Questions?
+
+Feel free to:
+- Open a [Discussion](https://github.com/rldyourmnd/better-terminal-usage/discussions)
+- Ask in an issue with the `question` label
+
+---
+
+Thank you for contributing! 🙌
