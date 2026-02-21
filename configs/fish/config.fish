@@ -10,21 +10,17 @@
 starship init fish | source
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# ZOXIDE - Smart cd with frecency (Layer 2)
+# LAYER 2 TOOLS - Uncommented by install-layer-2.sh after installation
 # ═══════════════════════════════════════════════════════════════════════════════
-zoxide init fish | source
+# Zoxide (smart cd)
+# zoxide init fish | source
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# ATUIN - SQLite history with sync (Layer 2)
-# ═══════════════════════════════════════════════════════════════════════════════
-# Add atuin to PATH before initialization
-set -gx PATH $HOME/.atuin/bin $PATH
-atuin init fish --disable-up-arrow | source
+# Atuin (history) - PATH must be set BEFORE init
+# set -gx PATH $HOME/.atuin/bin $PATH
+# atuin init fish --disable-up-arrow | source
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# FZF - Fuzzy finder integration (Layer 2)
-# ═══════════════════════════════════════════════════════════════════════════════
-fzf --fish | source
+# FZF (fuzzy finder)
+# fzf --fish | source
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ENVIRONMENT VARIABLES
@@ -33,7 +29,7 @@ set -gx EDITOR nvim
 set -gx VISUAL nvim
 set -gx PAGER bat
 
-# FZF configuration
+# FZF configuration (used when FZF is installed)
 set -gx FZF_CTRL_T_OPTS "--walker-skip .git,node_modules,target --preview 'bat -n --color=always {}' --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 set -gx FZF_CTRL_R_OPTS "--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
 set -gx FZF_ALT_C_OPTS "--preview 'eza --tree --level=1 {}'"

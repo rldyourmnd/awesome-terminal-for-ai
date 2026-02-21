@@ -216,8 +216,14 @@ The config.fish initializes tools in this order:
 
 1. **Starship** - Prompt (must be first)
 2. **Zoxide** - Smart cd (Layer 2)
-3. **Atuin** - History sync (Layer 2)
+3. **Atuin** - History sync (Layer 2) - PATH set BEFORE init
 4. **fzf** - Fuzzy finder (Layer 2)
+
+**Important:** Atuin must be added to PATH before initialization:
+```fish
+set -gx PATH $HOME/.atuin/bin $PATH
+atuin init fish --disable-up-arrow | source
+```
 
 ### Key Abbreviations
 

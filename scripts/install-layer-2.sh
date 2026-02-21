@@ -186,14 +186,15 @@ if [ -f "$FISH_CONFIG" ]; then
         log_success "zoxide enabled in Fish config"
     fi
 
-    # Uncomment atuin
-    if grep -q "^# atuin init fish" "$FISH_CONFIG" 2>/dev/null; then
+    # Uncomment atuin (PATH line + init line)
+    if grep -q "^# set -gx PATH \$HOME/.atuin/bin \$PATH" "$FISH_CONFIG" 2>/dev/null; then
+        sed -i 's/^# set -gx PATH \$HOME\/.atuin\/bin \$PATH/set -gx PATH $HOME\/.atuin\/bin $PATH/' "$FISH_CONFIG"
         sed -i 's/^# atuin init fish --disable-up-arrow | source/atuin init fish --disable-up-arrow | source/' "$FISH_CONFIG"
         log_success "atuin enabled in Fish config"
     fi
 
     # Uncomment fzf
-    if grep -q "^# fzf --fish" "$FISH_CONFIG" 2>/dev/null; then
+    if grep -q "^# fzf --fish | source" "$FISH_CONFIG" 2>/dev/null; then
         sed -i 's/^# fzf --fish | source/fzf --fish | source/' "$FISH_CONFIG"
         log_success "fzf enabled in Fish config"
     fi
