@@ -1,0 +1,272 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# STARSHIP CONFIGURATION - Ultimate AI Terminal Environment
+# ═══════════════════════════════════════════════════════════════════════════════
+# Performance: <5ms startup, Rust-based
+# Style: Minimal, high contrast for AI readability
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FORMAT - Minimal left, info on right
+# ═══════════════════════════════════════════════════════════════════════════════
+format = "$directory$git_branch$git_status$character"
+right_format = "$cmd_duration$jobs"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SCAN TIMEOUTS - Fast performance
+# ═══════════════════════════════════════════════════════════════════════════════
+scan_timeout = 10
+command_timeout = 100
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DIRECTORY
+# ═══════════════════════════════════════════════════════════════════════════════
+[directory]
+truncate_to_repo = true
+truncation_length = 3
+style = "bold blue"
+format = "[$path]($style) "
+read_only = " 🔒"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# GIT
+# ═══════════════════════════════════════════════════════════════════════════════
+[git_branch]
+format = "[$symbol$branch]($style) "
+symbol = ""
+style = "bold purple"
+truncation_length = 20
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold yellow"
+conflicted = "="
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMMAND DURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+[cmd_duration]
+min_time = 500
+format = "[$duration]($style)"
+style = "bold gray"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# JOBS
+# ═══════════════════════════════════════════════════════════════════════════════
+[jobs]
+symbol = "✦"
+style = "bold yellow"
+format = "[$symbol$number]($style) "
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CHARACTER (prompt)
+# ═══════════════════════════════════════════════════════════════════════════════
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DISABLED MODULES (for speed)
+# ═══════════════════════════════════════════════════════════════════════════════
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[azure]
+disabled = true
+
+[buf]
+disabled = true
+
+[bun]
+disabled = true
+
+[c]
+disabled = true
+
+[cobol]
+disabled = true
+
+[conda]
+disabled = true
+
+[crystal]
+disabled = true
+
+[daml]
+disabled = true
+
+[dart]
+disabled = true
+
+[deno]
+disabled = true
+
+[dotnet]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[erlang]
+disabled = true
+
+[fennel]
+disabled = true
+
+[fossil_branch]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[gradle]
+disabled = true
+
+[haskell]
+disabled = true
+
+[haxe]
+disabled = true
+
+[helm]
+disabled = true
+
+[hostname]
+disabled = true
+
+[java]
+disabled = true
+
+[jobs]
+disabled = false
+
+[julia]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[lua]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[meson]
+disabled = true
+
+[nim]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[ocaml]
+disabled = true
+
+[opa]
+disabled = true
+
+[openstack]
+disabled = true
+
+[perl]
+disabled = true
+
+[php]
+disabled = true
+
+[pulumi]
+disabled = true
+
+[purescript]
+disabled = true
+
+[rlang]
+disabled = true
+
+[red]
+disabled = true
+
+[ruby]
+disabled = true
+
+[scala]
+disabled = true
+
+[shell]
+disabled = true
+
+[shlvl]
+disabled = true
+
+[singularity]
+disabled = true
+
+[spack]
+disabled = true
+
+[status]
+disabled = true
+
+[sudo]
+disabled = true
+
+[swift]
+disabled = true
+
+[terraform]
+disabled = true
+
+[time]
+disabled = true
+
+[username]
+disabled = true
+
+[vagrant]
+disabled = true
+
+[vlang]
+disabled = true
+
+[vcsh]
+disabled = true
+
+[zig]
+disabled = true
