@@ -17,6 +17,7 @@ zoxide init fish | source
 # ═══════════════════════════════════════════════════════════════════════════════
 # ATUIN - SQLite history with sync (Layer 2)
 # ═══════════════════════════════════════════════════════════════════════════════
+# Add atuin to PATH before initialization
 set -gx PATH $HOME/.atuin/bin $PATH
 atuin init fish --disable-up-arrow | source
 
