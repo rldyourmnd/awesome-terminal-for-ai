@@ -159,6 +159,48 @@ else
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# SET DEFAULTS - Fish as login shell, WezTerm as terminal
+# ═══════════════════════════════════════════════════════════════════════════════
+log_info "Setting up default shell and terminal..."
+
+# Fish as default shell
+FISH_PATH="$(command -v fish 2>/dev/null || true)"
+if [ -n "$FISH_PATH" ]; then
+    if ! grep -qxF "$FISH_PATH" /etc/shells 2>/dev/null; then
+        log_info "Adding $FISH_PATH to /etc/shells..."
+        echo "$FISH_PATH" | sudo tee -a /etc/shells > /dev/null
+    fi
+    CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+    if [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
+        log_info "Setting Fish as default shell..."
+        sudo chsh -s "$FISH_PATH" "$USER"
+        log_success "Fish set as default shell"
+    else
+        log_info "Fish is already the default shell"
+    fi
+fi
+
+# WezTerm as default terminal
+if command_exists wezterm; then
+    # XDG default terminal
+    mkdir -p ~/.config
+    if [ ! -f ~/.config/xdg-terminals.list ]; then
+        echo "wezterm.desktop" > ~/.config/xdg-terminals.list
+        log_success "WezTerm set as XDG default terminal"
+    fi
+
+    # GNOME default terminal (if gsettings available)
+    if command_exists gsettings; then
+        CURRENT_TERM="$(gsettings get org.gnome.desktop.default-applications.terminal exec 2>/dev/null || true)"
+        if [ "$CURRENT_TERM" != "'wezterm'" ]; then
+            gsettings set org.gnome.desktop.default-applications.terminal exec 'wezterm' 2>/dev/null || true
+            gsettings set org.gnome.desktop.default-applications.terminal exec-arg '' 2>/dev/null || true
+            log_success "WezTerm set as GNOME default terminal"
+        fi
+    fi
+fi
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # VERIFICATION
 # ═══════════════════════════════════════════════════════════════════════════════
 echo ""
@@ -194,6 +236,6 @@ echo -e "${GREEN}  FOUNDATION LAYER COMPLETE!                                ${N
 echo -e "${GREEN}════════════════════════════════════════════════════════════${NC}"
 echo ""
 echo "Next steps:"
-echo "1. Restart terminal or run: exec fish"
+echo "1. Log out and back in (or reboot) to activate Fish as default shell"
 echo "2. Run Layer 1: ./scripts/install-layer-1.sh"
 echo ""
