@@ -17,7 +17,15 @@ local config = wezterm.config_builder()
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- WebGPU + Vulkan caused SIGSEGV with NVIDIA driver 580.x
 -- OpenGL is more stable and still GPU-accelerated
-config.front_end = 'OpenGL'
+-- Emergency fallback:
+--   WEZTERM_SAFE_RENDERER=1 wezterm
+-- This keeps default behavior fast/stable while allowing one-command safe mode.
+local safe_renderer = os.getenv 'WEZTERM_SAFE_RENDERER' == '1'
+if safe_renderer then
+  config.front_end = 'Software'
+else
+  config.front_end = 'OpenGL'
+end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- WAYLAND - DISABLED for NVIDIA Multi-Monitor Stability
@@ -70,8 +78,8 @@ config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 -- Fancy tab bar has more complex rendering pipeline
 config.use_fancy_tab_bar = false
 
--- Scrollback: balanced for cache locality + sufficient history
-config.scrollback_lines = 35000
+-- Scrollback: lower memory pressure for long AI sessions while keeping deep history.
+config.scrollback_lines = 20000
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- TERMINAL CAPABILITIES - For modern AI tools
@@ -210,7 +218,7 @@ config.keys = {
   { key = '0', mods = 'CTRL|SHIFT', action = act.ResetFontSize },
 
   -- Debug and utilities
-  { key = 'L', mods = 'CTRL|SHIFT', action = act.ShowDebugOverlay },
+  { key = 'D', mods = 'CTRL|SHIFT', action = act.ShowDebugOverlay },
   { key = 'P', mods = 'CTRL|SHIFT', action = act.ActivateCommandPalette },
 
   -- Toggle ligatures (useful for code readability)
