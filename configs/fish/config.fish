@@ -37,8 +37,8 @@ if test -d ~/.nvm/versions/node
     if test -n "$nvm_default"; and test -d ~/.nvm/versions/node/$nvm_default/bin
         fish_add_path ~/.nvm/versions/node/$nvm_default/bin
     else
-        # Fallback: find any installed node version
-        set node_version (ls ~/.nvm/versions/node 2>/dev/null | head -1)
+        # Fallback: use highest installed node version (deterministic).
+        set node_version (ls -1 ~/.nvm/versions/node 2>/dev/null | sort -V | tail -1)
         if test -n "$node_version"; and test -d ~/.nvm/versions/node/$node_version/bin
             fish_add_path ~/.nvm/versions/node/$node_version/bin
         end
