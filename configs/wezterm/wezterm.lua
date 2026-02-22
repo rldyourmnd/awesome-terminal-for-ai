@@ -123,7 +123,11 @@ config.window_padding = {
 }
 
 -- Font configuration
-config.font = wezterm.font { family = 'JetBrains Mono', weight = 'Regular' }
+config.font = wezterm.font_with_fallback {
+  { family = 'JetBrainsMono Nerd Font', weight = 'Regular' },
+  { family = 'JetBrains Mono', weight = 'Regular' },
+  { family = 'Symbols Nerd Font Mono' },
+}
 config.font_size = 12.0
 config.line_height = 1.1
 
