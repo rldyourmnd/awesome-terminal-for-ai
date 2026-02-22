@@ -68,34 +68,6 @@ set -gx PATH $__path_dedup
 set -e __path_dedup
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# TOOL INITIALIZATION - Conditional sourcing for stability
-# ═══════════════════════════════════════════════════════════════════════════════
-# Starship prompt (fastest prompt, Rust-based)
-if type -q starship
-    starship init fish | source
-    # Transient prompt - cleaner scrollback (optional, uncomment if desired)
-    # function starship_transient_prompt_func
-    #     starship module character
-    # end
-    # enable_transience
-end
-
-# Zoxide (smart cd) - 2.9ms
-if type -q zoxide
-    zoxide init fish | source
-end
-
-# Atuin (history sync) - 5.2ms
-if type -q atuin
-    atuin init fish --disable-up-arrow | source
-end
-
-# FZF (fuzzy finder) - 2.5ms
-if type -q fzf
-    fzf --fish | source
-end
-
-# ═══════════════════════════════════════════════════════════════════════════════
 # ENVIRONMENT VARIABLES
 # ═══════════════════════════════════════════════════════════════════════════════
 set -gx EDITOR nvim
@@ -106,6 +78,32 @@ set -gx PAGER bat
 set -gx FZF_CTRL_T_OPTS "--walker-skip .git,node_modules,target --preview 'bat -n --color=always {}' --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 set -gx FZF_CTRL_R_OPTS "--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
 set -gx FZF_ALT_C_OPTS "--preview 'eza --tree --level=1 {}'"
+
+set fish_greeting
+
+# Non-interactive fish should only keep deterministic PATH/env.
+if not status is-interactive
+    return
+end
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TOOL INITIALIZATION (interactive)
+# ═══════════════════════════════════════════════════════════════════════════════
+if command -q starship
+    starship init fish | source
+end
+
+if command -q zoxide
+    zoxide init fish | source
+end
+
+if command -q atuin
+    atuin init fish --disable-up-arrow | source
+end
+
+if command -q fzf
+    fzf --fish | source
+end
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # ABBREVIATIONS - Navigation
@@ -198,8 +196,3 @@ end
 function gg
     rg -i $argv
 end
-
-# ═════════════════════════════════════════════════════════════════════════════════
-# STARTUP
-# ═══════════════════════════════════════════════════════════════════════════════
-set fish_greeting
