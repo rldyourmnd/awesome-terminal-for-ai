@@ -23,6 +23,10 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &> /dev/null; }
 
+# Resolve project root so script works from any current directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # PREFLIGHT CHECKS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -317,15 +321,15 @@ else
 fi
 
 # Nerd Fonts for Starship/WezTerm icons
-if [ -x "scripts/install-nerd-fonts.sh" ]; then
+if [ -x "$PROJECT_DIR/scripts/install-nerd-fonts.sh" ]; then
     log_info "Installing Nerd Fonts for prompt icons..."
-    if ./scripts/install-nerd-fonts.sh; then
+    if "$PROJECT_DIR/scripts/install-nerd-fonts.sh"; then
         log_success "Nerd Fonts installed"
     else
         log_warn "Nerd Fonts installation failed (continuing)"
     fi
 else
-    log_warn "Nerd font installer script not found: scripts/install-nerd-fonts.sh"
+    log_warn "Nerd font installer script not found: $PROJECT_DIR/scripts/install-nerd-fonts.sh"
 fi
 
 log_success "Foundation complete!"
@@ -337,22 +341,31 @@ log_info "Applying configurations..."
 
 # Copy WezTerm config
 mkdir -p ~/.config/wezterm
-cp configs/wezterm/wezterm.lua ~/.wezterm.lua
+cp "$PROJECT_DIR/configs/wezterm/wezterm.lua" ~/.wezterm.lua
+cp "$PROJECT_DIR/configs/wezterm/wezterm.lua" ~/.config/wezterm/wezterm.lua
 log_success "WezTerm config applied"
 
 # Copy Fish config
 mkdir -p ~/.config/fish
-cp configs/fish/config.fish ~/.config/fish/config.fish
+cp "$PROJECT_DIR/configs/fish/config.fish" ~/.config/fish/config.fish
 log_success "Fish config applied"
 
 # Copy Starship config
 mkdir -p ~/.config
 mkdir -p ~/.config/starship/profiles
 mkdir -p ~/.local/bin
-cp configs/starship/starship.toml ~/.config/starship.toml
-cp configs/starship/profiles/*.toml ~/.config/starship/profiles/
-cp scripts/starship/switch-profile.sh ~/.local/bin/starship-profile
+if command_exists starship; then
+    STARSHIP_CONFIG="$PROJECT_DIR/configs/starship/starship.toml" starship module character >/dev/null
+fi
+cp "$PROJECT_DIR/configs/starship/starship.toml" ~/.config/starship.toml
+cp "$PROJECT_DIR"/configs/starship/profiles/*.toml ~/.config/starship/profiles/
+cp "$PROJECT_DIR/scripts/starship/switch-profile.sh" ~/.local/bin/starship-profile
 chmod +x ~/.local/bin/starship-profile
+if command_exists starship-profile; then
+    starship-profile ultra-max >/dev/null 2>&1 || log_warn "Failed to apply ultra-max profile automatically"
+elif [ -x ~/.local/bin/starship-profile ]; then
+    ~/.local/bin/starship-profile ultra-max >/dev/null 2>&1 || log_warn "Failed to apply ultra-max profile automatically"
+fi
 log_success "Starship config applied (default + profiles + switcher)"
 
 # ═══════════════════════════════════════════════════════════════════════════════

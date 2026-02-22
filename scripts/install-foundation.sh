@@ -120,6 +120,8 @@ mkdir -p ~/.local/bin
 # Copy WezTerm config
 if [ -f "$PROJECT_DIR/configs/wezterm/wezterm.lua" ]; then
     cp "$PROJECT_DIR/configs/wezterm/wezterm.lua" ~/.wezterm.lua
+    mkdir -p ~/.config/wezterm
+    cp "$PROJECT_DIR/configs/wezterm/wezterm.lua" ~/.config/wezterm/wezterm.lua
     log_success "WezTerm config applied"
 else
     log_warn "WezTerm config not found at $PROJECT_DIR/configs/wezterm/wezterm.lua"
@@ -145,6 +147,11 @@ if [ -f "$PROJECT_DIR/configs/starship/starship.toml" ]; then
         cp "$PROJECT_DIR"/configs/starship/profiles/*.toml ~/.config/starship/profiles/
         cp "$PROJECT_DIR/scripts/starship/switch-profile.sh" ~/.local/bin/starship-profile
         chmod +x ~/.local/bin/starship-profile
+        if command_exists starship-profile; then
+            starship-profile ultra-max >/dev/null 2>&1 || log_warn "Failed to apply ultra-max profile automatically"
+        elif [ -x ~/.local/bin/starship-profile ]; then
+            ~/.local/bin/starship-profile ultra-max >/dev/null 2>&1 || log_warn "Failed to apply ultra-max profile automatically"
+        fi
         log_success "Starship config applied (default + profiles + switcher)"
     fi
 else
