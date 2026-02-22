@@ -84,16 +84,61 @@ config.enable_kitty_keyboard = true  -- Advanced keyboard protocol
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- DEFAULT SHELL - Fish as primary (auto-detect path)
 -- ═══════════════════════════════════════════════════════════════════════════════
--- Search Homebrew, /usr/local, and system paths in priority order
-local fish_path = '/usr/bin/fish'
-for _, candidate in ipairs {
-  '/home/linuxbrew/.linuxbrew/bin/fish',
-  '/usr/local/bin/fish',
-  '/usr/bin/fish',
-} do
-  local f = io.open(candidate, 'r')
-  if f then f:close(); fish_path = candidate; break end
+-- Use `command -v` first, then fallback to common install locations.
+local function trim(s)
+  return (s and s:match('^%s*(.-)%s*$')) or nil
 end
+
+local function command_output(cmd)
+  local handle = io.popen(cmd)
+  if not handle then
+    return nil
+  end
+
+  local output = handle:read('*l')
+  handle:close()
+  return trim(output)
+end
+
+local function file_exists(path)
+  local f = io.open(path, 'r')
+  if not f then
+    return false
+  end
+  f:close()
+  return true
+end
+
+local fish_path = command_output('command -v fish 2>/dev/null')
+if not fish_path or fish_path == '' then
+  local homebrew_prefix = os.getenv('HOMEBREW_PREFIX')
+  local home_dir = os.getenv('HOME') or ''
+  local candidates = {
+    '/usr/bin/fish',
+    '/bin/fish',
+    '/usr/local/bin/fish',
+    '/usr/local/sbin/fish',
+    '/home/linuxbrew/.linuxbrew/bin/fish',
+    home_dir .. '/.linuxbrew/bin/fish',
+    '/opt/homebrew/bin/fish',
+  }
+
+  if homebrew_prefix then
+    table.insert(candidates, 1, homebrew_prefix .. '/bin/fish')
+  end
+
+  for _, candidate in ipairs(candidates) do
+    if file_exists(candidate) then
+      fish_path = candidate
+      break
+    end
+  end
+
+  if not fish_path then
+    fish_path = '/usr/bin/fish'
+  end
+end
+
 config.default_prog = { fish_path, '-l' }
 
 -- ═══════════════════════════════════════════════════════════════════════════════

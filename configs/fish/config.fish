@@ -14,12 +14,26 @@ set -l __path_candidates \
     ~/.bun/bin \
     ~/.local/share/pnpm \
     /usr/local/go/bin \
-    /home/linuxbrew/.linuxbrew/bin \
-    /home/linuxbrew/.linuxbrew/sbin \
     ~/.pulumi/bin \
     ~/Android/Sdk/emulator \
     ~/Android/Sdk/platform-tools \
     ~/.local/share/pipx
+
+set -l __linuxbrew_prefix
+
+if set -q HOMEBREW_PREFIX
+    set __linuxbrew_prefix $HOMEBREW_PREFIX
+else if test -d /home/linuxbrew/.linuxbrew
+    set __linuxbrew_prefix /home/linuxbrew/.linuxbrew
+else if test -d "$HOME/.linuxbrew"
+    set __linuxbrew_prefix "$HOME/.linuxbrew"
+end
+
+if test -n "$__linuxbrew_prefix"
+    set -a __path_candidates "$__linuxbrew_prefix/bin" "$__linuxbrew_prefix/sbin"
+end
+
+set -e __linuxbrew_prefix
 
 for path in $__path_candidates
     if test -d $path

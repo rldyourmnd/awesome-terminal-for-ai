@@ -130,7 +130,7 @@ Linux = ""
 Unknown = ""
 
 [directory]
-home_symbol = "/home/rldyourmnd"
+home_symbol = "~"
 truncate_to_repo = false
 truncation_length = 99
 truncation_symbol = ""
