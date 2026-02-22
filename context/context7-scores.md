@@ -1,6 +1,7 @@
-# Benchmark Scores
+# Benchmark Scores (Research Snapshot)
 
-> All scores from research - Updated February 2026
+> Historical research snapshot from February 2026.
+> For current machine versions and runtime state, use `context/system-state.md`.
 
 ## Terminals
 

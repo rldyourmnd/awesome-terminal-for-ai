@@ -2,7 +2,8 @@
 
 > Complete research data and tool documentation
 
-This directory contains all research data, benchmarks, and detailed tool documentation from the analysis conducted in February 2026.
+This directory contains research data, benchmarks, and detailed tool documentation from the analysis conducted in February 2026.
+Live machine snapshots are stored separately in `context/system-state.md`.
 
 ## Directory Structure
 
@@ -10,6 +11,7 @@ This directory contains all research data, benchmarks, and detailed tool documen
 context/
 ├── README.md                    # This file
 ├── benchmarks.md                # Performance benchmarks
+├── system-state.md              # Current machine versions and config parity
 ├── research/
 │   ├── terminals.md             # Terminal emulator research
 │   └── shells.md                # Shell research
@@ -81,7 +83,7 @@ Each layer has detailed documentation including:
 All data sourced from:
 - Official documentation and benchmark platforms
 - **February 2026** - Research date
-- **User Environment** - RTX 2070, i7-8750H, 32GB RAM, Wayland
+- **User Environment (current)** - RTX 2070, i7-8750H, 32GB RAM, X11
 
 ## Contributing
 
