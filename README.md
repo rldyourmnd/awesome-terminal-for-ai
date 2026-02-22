@@ -103,23 +103,30 @@ semgrep for static analysis, protecting your code from vulnerabilities.
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                                                                     │
+│  LAYER 5: AI ORCHESTRATION (user-provided)                         │
+│  claude CLI • gemini CLI • codex CLI                               │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
 │  LAYER 4: CODE INTELLIGENCE                                        │
 │  grepai (88.4) • ast-grep (78.7) • probe • semgrep • ctags        │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  LAYER 3: GITHUB & GIT                                             │
-│  gh CLI (83.2) • lazygit • delta                                   │
+│  gh CLI (83.2) • lazygit (v0.59) • delta                           │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  LAYER 2: PRODUCTIVITY                                             │
-│  fzf • zoxide • Atuin • uv (91.4) • bun (85) • watchexec          │
+│  fzf (v0.68) • zoxide (v0.9.9) • Atuin (v18.12) • uv (0.10.4)     │
+│  bun (v1.3.9) • watchexec • glow • bottom (0.12.3)                │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  LAYER 1: FILE OPERATIONS                                          │
-│  bat (91.8) • fd (86.1) • rg (81) • sd (90.8) • jq • yq           │
+│  bat (v0.26) • fd (v10.3) • rg (15.1) • sd (v1.0)                 │
+│  jq (1.8.1) • yq (v4.52) • eza (v0.23)                            │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
@@ -229,6 +236,15 @@ That's it! Your terminal is now optimized. 🎉
 | [ctags](https://ctags.io/) | - | Code indexing |
 | [tokei](https://github.com/XAMPPRocky/tokei) | - | Code statistics |
 
+### Layer 5: AI Orchestration (User-Provided)
+| Tool | Provider | Description |
+|------|----------|-------------|
+| [claude CLI](https://docs.anthropic.com/en/docs/claude-code) | Anthropic | Deep reasoning AI assistant |
+| [gemini CLI](https://github.com/google-gemini/gemini-cli) | Google | Fast research and analysis |
+| [codex CLI](https://github.com/openai/codex) | OpenAI | Code generation |
+
+> **Note**: Layer 5 tools are not installed by this project. Install them separately from their official sources.
+
 </details>
 
 ## 📖 Usage Examples
@@ -286,6 +302,22 @@ sg -p 'fn $NAME($$$PARAMS) $$$BODY' -l rust
 
 # Security scan
 semgrep --config auto .
+```
+
+### AI Orchestration (Layer 5)
+
+```bash
+# Deep reasoning with Claude
+claude "Explain this architecture and suggest improvements"
+
+# Fast research with Gemini
+gemini -p "What are the best practices for this pattern?"
+
+# Code generation with Codex
+codex exec "Write a function that validates email addresses"
+
+# Combine with other tools
+rg "TODO" | claude "Prioritize these TODOs and suggest implementation order"
 ```
 
 ## 📁 Project Structure
