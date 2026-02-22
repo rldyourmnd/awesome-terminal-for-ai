@@ -199,6 +199,30 @@ else
     log_info "tokei already installed"
 fi
 
+# fzf (85.4) - fuzzy finder
+if ! command_exists fzf; then
+    log_info "Installing fzf..."
+    if [ -d "$HOME/.fzf" ]; then
+        rm -rf "$HOME/.fzf"
+    fi
+    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+    "$HOME/.fzf/install" --bin --no-update-rc --no-completion
+    mkdir -p ~/.local/bin
+    ln -sf "$HOME/.fzf/bin/fzf" ~/.local/bin/fzf
+    log_success "fzf installed"
+else
+    log_info "fzf already installed"
+fi
+
+# hyperfine - command benchmarking
+if ! command_exists hyperfine; then
+    log_info "Installing hyperfine..."
+    cargo install hyperfine
+    log_success "hyperfine installed"
+else
+    log_info "hyperfine already installed"
+fi
+
 log_success "Layer 2 complete!"
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -222,6 +246,47 @@ if ! command_exists lazygit; then
     log_success "lazygit installed"
 else
     log_info "lazygit already installed"
+fi
+
+# delta - git diff viewer with syntax highlighting
+if ! command_exists delta; then
+    log_info "Installing delta..."
+    cargo install git-delta
+    log_success "delta installed"
+else
+    log_info "delta already installed"
+fi
+
+# Catppuccin Mocha theme for bat (used by delta)
+if command_exists bat; then
+    BAT_THEMES_DIR="$(bat --config-dir 2>/dev/null)/themes"
+    if [ -n "$BAT_THEMES_DIR" ]; then
+        mkdir -p "$BAT_THEMES_DIR"
+        if [ ! -f "$BAT_THEMES_DIR/Catppuccin Mocha.tmTheme" ]; then
+            log_info "Installing Catppuccin Mocha theme for bat..."
+            curl -sL "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme" \
+                -o "$BAT_THEMES_DIR/Catppuccin Mocha.tmTheme"
+            bat cache --build 2>/dev/null
+            log_success "Catppuccin Mocha theme installed for bat"
+        fi
+    fi
+fi
+
+# Configure delta as git pager
+if command_exists delta; then
+    log_info "Configuring delta..."
+    git config --global core.pager "delta"
+    git config --global delta.line-numbers true
+    git config --global delta.side-by-side true
+    git config --global delta.navigate true
+    git config --global delta.dark true
+    git config --global delta.syntax-theme "Catppuccin Mocha" 2>/dev/null \
+        || git config --global delta.syntax-theme "Monokai Extended"
+    git config --global delta.hyperlinks true
+    git config --global interactive.diffFilter "delta --color-only"
+    git config --global merge.conflictstyle diff3
+    git config --global diff.colorMoved default
+    log_success "delta configured"
 fi
 
 log_success "Layer 3 complete!"
@@ -366,6 +431,48 @@ else
     log_warn "Nerd font installer script not found: $PROJECT_DIR/scripts/install-nerd-fonts.sh"
 fi
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# SET DEFAULTS - Fish as login shell, WezTerm as terminal
+# ═══════════════════════════════════════════════════════════════════════════════
+log_info "Setting up default shell and terminal..."
+
+# Fish as default shell
+FISH_PATH="$(command -v fish 2>/dev/null || true)"
+if [ -n "$FISH_PATH" ]; then
+    if ! grep -qxF "$FISH_PATH" /etc/shells 2>/dev/null; then
+        log_info "Adding $FISH_PATH to /etc/shells..."
+        echo "$FISH_PATH" | sudo tee -a /etc/shells > /dev/null
+    fi
+    CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+    if [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
+        log_info "Setting Fish as default shell..."
+        sudo chsh -s "$FISH_PATH" "$USER"
+        log_success "Fish set as default shell"
+    else
+        log_info "Fish is already the default shell"
+    fi
+fi
+
+# WezTerm as default terminal
+if command_exists wezterm; then
+    # XDG default terminal
+    mkdir -p ~/.config
+    if [ ! -f ~/.config/xdg-terminals.list ]; then
+        echo "wezterm.desktop" > ~/.config/xdg-terminals.list
+        log_success "WezTerm set as XDG default terminal"
+    fi
+
+    # GNOME default terminal (if gsettings available)
+    if command_exists gsettings; then
+        CURRENT_TERM="$(gsettings get org.gnome.desktop.default-applications.terminal exec 2>/dev/null || true)"
+        if [ "$CURRENT_TERM" != "'wezterm'" ]; then
+            gsettings set org.gnome.desktop.default-applications.terminal exec 'wezterm' 2>/dev/null || true
+            gsettings set org.gnome.desktop.default-applications.terminal exec-arg '' 2>/dev/null || true
+            log_success "WezTerm set as GNOME default terminal"
+        fi
+    fi
+fi
+
 log_success "Foundation complete!"
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -419,7 +526,7 @@ echo "  Layer 4:    grepai, ast-grep, probe, semgrep, ctags, tokei"
 echo "  Layer 5:    Claude Code, Gemini CLI, Codex CLI"
 echo ""
 echo "Next steps:"
-echo "1. Restart your terminal or run: exec fish"
+echo "1. Log out and back in (or reboot) to activate Fish as default shell"
 echo "2. Initialize grepai: grepai init"
 echo "3. Login to GitHub CLI: gh auth login"
 echo "4. Login to Atuin (optional): atuin login"
