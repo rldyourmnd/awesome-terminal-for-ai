@@ -25,7 +25,6 @@ Per-platform flow:
 - `configs/`: canonical template configs
 - `docs/`: deep reference and runbooks
 - `wiki/`: operational quick guides
-- `context/`: machine/research snapshots
 
 ## Validation Boundary
 

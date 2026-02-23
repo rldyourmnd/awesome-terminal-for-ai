@@ -84,8 +84,7 @@ fish -n configs/fish/config.fish
 
 and update:
 
-- `context/system-state.md`
-- `context/script-validation.md`
+- `docs/platforms/linux/README.md` (if behavior changed)
 - `CHANGELOG.md` under `[Unreleased]`
 
 The `docs/operations/health-check.md` and `docs/operations/troubleshooting.md` files provide the operational playbook for deviations.

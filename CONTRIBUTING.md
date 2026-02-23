@@ -66,8 +66,7 @@ Platform-specific checks (when relevant):
 
 If you changed tool versions or validation assumptions:
 
-- update `context/system-state.md`
-- update `context/script-validation.md`
+- update platform docs and runbooks under `docs/`
 - add a release note in `CHANGELOG.md` under `[Unreleased]`
 
 ## 🛠️ Development Setup

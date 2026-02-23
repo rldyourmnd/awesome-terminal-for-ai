@@ -164,7 +164,3 @@ Health check validates:
 - uv Windows installer docs
 - Bun Windows installer docs
 - Semgrep CLI install docs
-
-Research snapshot with validated package IDs:
-
-- `research/windows-production-research.md`
