@@ -1,7 +1,7 @@
-# Better Terminal Usage
+# Awesome Terminal for AI
 
 <p align="center">
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage">
+  <a href="https://github.com/rldyourmnd/awesome-terminal-for-ai">
     <img src="docs/assets/terminal-screenshot.png" alt="Terminal screenshot" width="100%">
   </a>
 </p>
@@ -11,14 +11,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/actions/workflows/ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/rldyourmnd/rld-better-terminal-ai-usage/ci.yml?branch=main&style=for-the-badge" alt="CI">
+  <a href="https://github.com/rldyourmnd/awesome-terminal-for-ai/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/rldyourmnd/awesome-terminal-for-ai/ci.yml?branch=main&style=for-the-badge" alt="CI">
   </a>
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v2.0.0">
+  <a href="https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v2.0.0">
     <img src="https://img.shields.io/badge/release-v2.0.0-2ea44f?style=for-the-badge" alt="Release 2.0.0">
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/rldyourmnd/rld-better-terminal-ai-usage?style=for-the-badge" alt="License">
+    <img src="https://img.shields.io/github/license/rldyourmnd/awesome-terminal-for-ai?style=for-the-badge" alt="License">
   </a>
 </p>
 
@@ -42,24 +42,24 @@
 ### Linux
 
 ```bash
-git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
-cd rld-better-terminal-ai-usage
+git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
+cd awesome-terminal-for-ai
 ./scripts/install.sh
 ```
 
 ### macOS
 
 ```bash
-git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
-cd rld-better-terminal-ai-usage
+git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
+cd awesome-terminal-for-ai
 ./scripts/install.sh
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
-cd rld-better-terminal-ai-usage
+git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
+cd awesome-terminal-for-ai
 .\scripts\install-windows.ps1
 ```
 
@@ -133,7 +133,7 @@ Linux layer scripts are now canonical under `scripts/linux/*` (root-level legacy
 
 - Read [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - Read [`SECURITY.md`](SECURITY.md)
-- Open issues: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/issues>
+- Open issues: <https://github.com/rldyourmnd/awesome-terminal-for-ai/issues>
 
 ## License
 
