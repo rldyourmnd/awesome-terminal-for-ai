@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added repository documentation index: `docs/README.md`.
 
 ### Changed
+- Renamed repository references from `rld-better-terminal-ai-usage` to `awesome-terminal-for-ai` across README, docs, wiki, security policy, and changelog links.
+- Updated project naming in public docs/wiki to **Awesome Terminal for AI**.
 - Reorganized Linux implementation into canonical OS-specific paths:
   - `scripts/linux/install-foundation.sh`
   - `scripts/linux/install-layer-{1..5}.sh`
@@ -27,6 +29,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `docs/platforms/linux/reference/layers/*`
   - `docs/platforms/linux/reference/terminal-tool-catalog.md`
 - Refreshed README/wiki/docs navigation with cleaner OS-first UX and updated script/doc paths.
+- Hardened CI workflow for release reliability and security:
+  - added workflow-level concurrency cancellation,
+  - pinned marketplace actions to immutable commit SHAs,
+  - added per-job timeout limits,
+  - expanded link-check coverage to docs/wiki core markdown files.
 
 ### Removed
 - Removed repository directories:
@@ -175,10 +182,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v2.0.0
-[1.3.0]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.3.0
-[1.2.2]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.2.2
-[1.2.1]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.2.1
-[1.1.0]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.1.0
-[1.0.0]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.0.0
+[Unreleased]: https://github.com/rldyourmnd/awesome-terminal-for-ai/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v2.0.0
+[1.3.0]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v1.3.0
+[1.2.2]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v1.2.2
+[1.2.1]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v1.2.1
+[1.1.0]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v1.1.0
+[1.0.0]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v1.0.0
