@@ -92,22 +92,22 @@ codex       # set OPENAI_API_KEY in environment
 
 `install.sh` executes:
 
-- `scripts/install-foundation.sh`
 - `scripts/install-layer-1.sh`
 - `scripts/install-layer-2.sh`
 - `scripts/install-layer-3.sh`
 - `scripts/install-layer-4.sh`
 - `scripts/install-layer-5.sh`
+- `scripts/install-foundation.sh`
 
 ### Layer-by-layer install
 
 ```bash
-./scripts/install-foundation.sh
 ./scripts/install-layer-1.sh
 ./scripts/install-layer-2.sh
 ./scripts/install-layer-3.sh
 ./scripts/install-layer-4.sh
 ./scripts/install-layer-5.sh
+./scripts/install-foundation.sh
 ```
 
 ### Installed content by layer
