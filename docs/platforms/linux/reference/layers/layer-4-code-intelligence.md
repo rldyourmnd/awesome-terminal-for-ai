@@ -22,7 +22,7 @@ This layer provides semantic code search, AST-aware editing, and security analys
 ### Quick Install
 
 ```bash
-./scripts/install-layer-4.sh
+./scripts/linux/install-layer-4.sh
 ```
 
 ### Manual Installation

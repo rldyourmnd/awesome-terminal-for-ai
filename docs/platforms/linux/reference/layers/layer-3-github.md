@@ -19,7 +19,7 @@ This layer provides full GitHub functionality in the terminal, plus enhanced git
 ### Quick Install
 
 ```bash
-./scripts/install-layer-3.sh
+./scripts/linux/install-layer-3.sh
 ```
 
 ### Manual Installation

@@ -21,12 +21,12 @@
 
 ### Linux
 
-- `scripts/install-foundation.sh`
-- `scripts/install-layer-1.sh`
-- `scripts/install-layer-2.sh`
-- `scripts/install-layer-3.sh`
-- `scripts/install-layer-4.sh`
-- `scripts/install-layer-5.sh`
+- `scripts/linux/install-foundation.sh`
+- `scripts/linux/install-layer-1.sh`
+- `scripts/linux/install-layer-2.sh`
+- `scripts/linux/install-layer-3.sh`
+- `scripts/linux/install-layer-4.sh`
+- `scripts/linux/install-layer-5.sh`
 
 ### macOS
 
@@ -54,5 +54,5 @@
 
 ## Canonical References
 
-- Layer docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/layers>
-- Foundation docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/blob/main/docs/foundation/foundation.md>
+- Linux layer docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/platforms/linux/reference/layers>
+- Linux foundation docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/blob/main/docs/platforms/linux/reference/foundation.md>

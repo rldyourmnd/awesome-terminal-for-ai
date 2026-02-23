@@ -53,4 +53,4 @@ This page is an operator index. Canonical matrix lives in docs.
 
 ## Canonical Catalog
 
-- <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/blob/main/docs/operations/terminal-tool-catalog.md>
+- <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/blob/main/docs/platforms/linux/reference/terminal-tool-catalog.md>

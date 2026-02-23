@@ -12,7 +12,7 @@ Layer 5 installs and uses three AI CLIs:
 
 This layer is cross-platform and is executed by:
 
-- Linux: `scripts/install-layer-5.sh`
+- Linux: `scripts/linux/install-layer-5.sh`
 - macOS: `scripts/macos/install-layer-5.sh`
 - Windows: `scripts/windows/install-layer-5.ps1`
 
@@ -21,7 +21,7 @@ This layer is cross-platform and is executed by:
 ### Scripted
 
 ```bash
-./scripts/install-layer-5.sh
+./scripts/linux/install-layer-5.sh
 ```
 
 ### Manual

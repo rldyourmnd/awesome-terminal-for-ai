@@ -8,7 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- No unreleased entries yet.
+- Added OS-first script documentation indexes:
+  - `scripts/README.md`
+  - `scripts/linux/README.md`
+  - `scripts/macos/README.md`
+  - `scripts/windows/README.md`
+- Added repository documentation index: `docs/README.md`.
+
+### Changed
+- Reorganized Linux implementation into canonical OS-specific paths:
+  - `scripts/linux/install-foundation.sh`
+  - `scripts/linux/install-layer-{1..5}.sh`
+  - `scripts/linux/install-nerd-fonts.sh`
+- Preserved backward compatibility by keeping root Linux wrapper entrypoints in `scripts/`.
+- Reorganized Linux deep reference docs into OS-scoped location:
+  - `docs/platforms/linux/reference/foundation.md`
+  - `docs/platforms/linux/reference/layers/*`
+  - `docs/platforms/linux/reference/terminal-tool-catalog.md`
+- Refreshed README/wiki/docs navigation with cleaner OS-first UX and updated script/doc paths.
 
 ## [2.0.0] - 2026-02-23
 

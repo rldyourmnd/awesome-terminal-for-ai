@@ -7,65 +7,39 @@
 </p>
 
 <p align="center">
-  <strong>Production-ready terminal stack for Linux (Debian/Ubuntu), macOS, and Windows: WezTerm + shell + Starship with a 5-layer AI-native toolchain.</strong>
+  <strong>Cross-platform terminal environment for Linux, macOS, and Windows with OS-first structure, layered installers, and production-grade validation.</strong>
 </p>
 
 <p align="center">
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-installation">Installation</a> •
-  <a href="#-terminal--tools-catalog">Terminal & Tools Catalog</a> •
-  <a href="#-verification-and-health-checks">Verification and Health Checks</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-operations">Operations</a> •
-  <a href="#-troubleshooting">Troubleshooting</a> •
-  <a href="#-contributing">Contributing</a> •
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/wiki">Wiki</a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/stargazers">
-    <img src="https://img.shields.io/github/stars/rldyourmnd/rld-better-terminal-ai-usage?style=for-the-badge&logo=github" alt="GitHub stars">
+  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/rldyourmnd/rld-better-terminal-ai-usage/ci.yml?branch=main&style=for-the-badge" alt="CI">
   </a>
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/network/members">
-    <img src="https://img.shields.io/github/forks/rldyourmnd/rld-better-terminal-ai-usage?style=for-the-badge&logo=github&color=blue" alt="GitHub forks">
+  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v2.0.0">
+    <img src="https://img.shields.io/badge/release-v2.0.0-2ea44f?style=for-the-badge" alt="Release 2.0.0">
   </a>
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/issues">
-    <img src="https://img.shields.io/github/issues/rldyourmnd/rld-better-terminal-ai-usage?style=for-the-badge&logo=github" alt="GitHub issues">
-  </a>
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/rldyourmnd/rld-better-terminal-ai-usage?style=for-the-badge&color=green" alt="License">
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/rldyourmnd/rld-better-terminal-ai-usage?style=for-the-badge" alt="License">
   </a>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/platform-Linux_(Debian%2FUbuntu)-orange?style=flat-square&logo=linux" alt="Linux platform">
-  <img src="https://img.shields.io/badge/platform-macOS-black?style=flat-square&logo=apple" alt="macOS platform">
-  <img src="https://img.shields.io/badge/platform-Windows-0078D6?style=flat-square&logo=windows" alt="Windows platform">
-  <img src="https://img.shields.io/badge/shell-Fish-9C27B0?style=flat-square&logo=fish-shell" alt="Shell">
-  <img src="https://img.shields.io/badge/terminal-WezTerm-00D8FF?style=flat-square" alt="Terminal">
-  <img src="https://img.shields.io/badge/prompt-Starship-DD0B78?style=flat-square" alt="Prompt">
-</p>
+## OS-First Navigation
 
----
+| Platform | Status | Install | Dry-run | Health check | Docs |
+| --- | --- | --- | --- | --- | --- |
+| Linux (Debian/Ubuntu) | Production | `./scripts/install.sh` | `./scripts/install.sh --dry-run` | `./scripts/health-check.sh --summary` | [`docs/platforms/linux/README.md`](docs/platforms/linux/README.md) |
+| macOS | Production | `./scripts/install.sh` or `./scripts/install-macos.sh` | `./scripts/macos/install.sh --dry-run` | `./scripts/health-check-macos.sh --summary` | [`docs/platforms/macos/README.md`](docs/platforms/macos/README.md) |
+| Windows (PowerShell + WinGet) | Production | `.\scripts\install-windows.ps1` | `.\scripts\install-windows.ps1 -DryRun` | `.\scripts\health-check-windows.ps1 -Summary` | [`docs/platforms/windows/README.md`](docs/platforms/windows/README.md) |
 
-## ✅ What this repository is
+## What You Get
 
-`rld-better-terminal-ai-usage` is a production-oriented terminal bootstrap organized by operating systems:
+- WezTerm + shell + Starship baseline.
+- Deterministic 5-layer tooling model.
+- OS-dispatched installers with platform-specific implementations.
+- Built-in health checks and CI smoke coverage for Linux/macOS/Windows.
 
-- WezTerm + Fish + Starship base environment.
-- Layered CLI tooling split into 5 isolated install layers.
-- Reproducible verification and troubleshooting workflow.
-- User-agnostic scripts (no hardcoded `/home/<user>` in install/config logic).
+## Quick Start
 
-## 🧭 Platform Layout
-
-| OS | Status | Docs | Entrypoints |
-|---|---|---|---|
-| Linux (Debian/Ubuntu) | Production | `docs/platforms/linux/README.md` | `./scripts/install.sh`, `./scripts/install.sh --dry-run`, `./scripts/health-check.sh` |
-| macOS | Production | `docs/platforms/macos/README.md` | `./scripts/install.sh` or `./scripts/install-macos.sh`, `./scripts/health-check-macos.sh` |
-| Windows | Production | `docs/platforms/windows/README.md` | `.\scripts\install-windows.ps1`, `.\scripts\install-windows.ps1 -DryRun`, `.\scripts\health-check-windows.ps1` |
-
-## 🚀 Quick Start
+### Linux
 
 ```bash
 git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
@@ -73,13 +47,15 @@ cd rld-better-terminal-ai-usage
 ./scripts/install.sh
 ```
 
-`install.sh` auto-detects OS:
+### macOS
 
-- Linux: runs Linux pipeline
-- macOS: delegates to `scripts/macos/install.sh`
-- Windows shell environments (`MINGW/MSYS/CYGWIN`): delegates to `scripts/install-windows.ps1`
+```bash
+git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
+cd rld-better-terminal-ai-usage
+./scripts/install.sh
+```
 
-Windows PowerShell quick start:
+### Windows (PowerShell)
 
 ```powershell
 git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
@@ -87,268 +63,76 @@ cd rld-better-terminal-ai-usage
 .\scripts\install-windows.ps1
 ```
 
-After setup (Linux/macOS):
+## Structure (Clean OS Layout)
 
-```bash
-exec fish
+```text
+scripts/
+├── install.sh                     # OS dispatcher
+├── health-check.sh                # OS dispatcher
+├── linux/                         # Linux canonical implementation
+├── macos/                         # macOS canonical implementation
+├── windows/                       # Windows canonical implementation
+├── install-macos.sh               # wrapper
+├── install-windows.ps1            # wrapper
+├── health-check-macos.sh          # wrapper
+└── health-check-windows.ps1       # wrapper
+
+docs/
+├── platforms/
+│   ├── linux/
+│   │   ├── README.md
+│   │   └── reference/             # Linux foundation + layers reference
+│   ├── macos/README.md
+│   └── windows/README.md
+├── operations/
+└── assets/
+
+wiki/                              # wiki source (published via script)
 ```
 
-## 🧩 Installation
+## Layer Model
 
-### Platform-specific setup
+| Layer | Scope |
+| --- | --- |
+| Foundation | Terminal + shell + prompt baseline |
+| Layer 1 | File operations (`bat`, `fd`, `rg`, `sd`, `jq`, `yq`, `eza`) |
+| Layer 2 | Productivity (`fzf`, `zoxide`, `atuin`, `uv`, `bun`, `watchexec`, `glow`, `btm`, `hyperfine`) |
+| Layer 3 | GitHub/Git (`gh`, `lazygit`, `delta`) |
+| Layer 4 | Code intelligence (`grepai`, `ast-grep`, `probe`, `semgrep`, `ctags`, `tokei`) |
+| Layer 5 | AI orchestration (`claude`, `gemini`, `codex`) |
 
-#### Linux (Debian/Ubuntu)
+## Validation and Quality Gates
 
-- Ubuntu/Debian (apt-based)
-- `curl` and `git` (required by installer scripts)
-- `sudo` for system packages
-- Internet access
-- `amd64` or `arm64` Linux (multi-arch installer fallbacks are handled automatically)
-
-Linux full install:
-
-```bash
-./scripts/install.sh
-```
-
-Linux flow smoke check (no installs):
+- Local:
 
 ```bash
 ./scripts/install.sh --dry-run
+./scripts/health-check.sh --strict --summary
 ```
 
-Linux layer-by-layer:
+- CI (`.github/workflows/ci.yml`):
+  - shell lint + syntax checks,
+  - markdown lint,
+  - link check,
+  - Linux/macOS/Windows flow smoke.
 
-```bash
-./scripts/install-foundation.sh
-./scripts/install-layer-1.sh
-./scripts/install-layer-2.sh
-./scripts/install-layer-3.sh
-./scripts/install-layer-4.sh
-./scripts/install-layer-5.sh
-```
+## Documentation and Wiki
 
-#### macOS
+- Platform docs: [`docs/platforms/`](docs/platforms/)
+- Operations runbooks: [`docs/operations/`](docs/operations/)
+- Wiki source: [`wiki/`](wiki/)
+- Wiki publish: `./scripts/publish-wiki.sh`
 
-- macOS 13+ recommended
-- `curl` and `git`
-- Internet access
+## Compatibility Notes
 
-macOS full install:
+Legacy Linux root-level scripts (`scripts/install-layer-*.sh`, `scripts/install-foundation.sh`) are kept as wrappers and forward to `scripts/linux/*` to preserve existing workflows.
 
-```bash
-./scripts/install-macos.sh
-```
+## Contributing
 
-macOS flow smoke check (no installs):
+- Read [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Read [`SECURITY.md`](SECURITY.md)
+- Open issues: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/issues>
 
-```bash
-./scripts/macos/install.sh --dry-run
-```
+## License
 
-or via auto-detect:
-
-```bash
-./scripts/install.sh
-```
-
-macOS layer-by-layer:
-
-```bash
-./scripts/macos/install-foundation.sh
-./scripts/macos/install-layer-1.sh
-./scripts/macos/install-layer-2.sh
-./scripts/macos/install-layer-3.sh
-./scripts/macos/install-layer-4.sh
-./scripts/macos/install-layer-5.sh
-```
-
-#### Windows
-
-- Windows 10/11
-- WinGet available (`winget --version`)
-- PowerShell profile write access (`$PROFILE`)
-- Internet access
-
-Windows full install:
-
-```powershell
-.\scripts\install-windows.ps1
-```
-
-Windows flow smoke check (no installs):
-
-```powershell
-.\scripts\install-windows.ps1 -DryRun
-```
-
-Windows help:
-
-```powershell
-.\scripts\install-windows.ps1 -Help
-.\scripts\health-check-windows.ps1 -Help
-```
-
-Windows layer-by-layer:
-
-```powershell
-.\scripts\windows\install-foundation.ps1
-.\scripts\windows\install-layer-1.ps1
-.\scripts\windows\install-layer-2.ps1
-.\scripts\windows\install-layer-3.ps1
-.\scripts\windows\install-layer-4.ps1
-.\scripts\windows\install-layer-5.ps1
-```
-
-### Layer model (Linux/macOS/Windows)
-
-| Layer | Script | Includes |
-|---|---|---|
-| Foundation | `install-foundation.sh` | WezTerm, Fish/PowerShell, Starship, Nerd Fonts, shared configs |
-| Layer 1 | `install-layer-1.sh` | bat, fd (fdfind), rg, sd, jq, yq, eza |
-| Layer 2 | `install-layer-2.sh` | fzf, zoxide, atuin, uv, bun, watchexec, glow, btm, hyperfine |
-| Layer 3 | `install-layer-3.sh` | gh CLI, lazygit, delta |
-| Layer 4 | `install-layer-4.sh` | grepai, ast-grep, probe, semgrep, ctags, tokei |
-| Layer 5 | `install-layer-5.sh` | claude, gemini, codex |
-
-## 🧰 Terminal & Tools Catalog
-
-- Linux catalog: [`docs/operations/terminal-tool-catalog.md`](docs/operations/terminal-tool-catalog.md)
-- macOS catalog and details: [`docs/platforms/macos/README.md`](docs/platforms/macos/README.md)
-- Windows catalog and details: [`docs/platforms/windows/README.md`](docs/platforms/windows/README.md)
-
-## 🛠 Verification and Health checks
-
-Run the built-in health-check before and after changes:
-
-```bash
-./scripts/health-check.sh
-```
-
-Linux strict:
-
-```bash
-./scripts/health-check.sh --strict
-```
-
-macOS:
-
-```bash
-./scripts/health-check-macos.sh --summary
-```
-
-Windows (PowerShell):
-
-```powershell
-.\scripts\health-check-windows.ps1 -Summary
-```
-
-Checks include:
-
-- Bash syntax validation for all installer scripts.
-- Tool presence and version probes.
-- PATH/`~/.local/bin` checks.
-- Config parity checks for WezTerm, Fish, and Starship.
-- Known failure checks (`semgrep`, `gemini`) with suggested remediation.
-- Linux `ast-grep` runtime verification that avoids false positives from non-ast-grep `sg` binaries.
-
-State snapshots are tracked in:
-
-- `context/system-state.md` (current machine snapshot)
-- `context/script-validation.md` (validation report)
-
-## 🏗️ Architecture
-
-```text
-Foundation: WezTerm + Fish + Starship
-↓
-Layer 1: File Operations (bat, fd, rg, sd, jq, yq, eza)
-↓
-Layer 2: Productivity (fzf, zoxide, atuin, uv, bun, watchexec, glow, btm, hyperfine)
-↓
-Layer 3: GitHub workflow (gh, lazygit, delta)
-↓
-Layer 4: Code Intelligence (grepai, ast-grep, probe, semgrep, ctags, tokei)
-↓
-Layer 5: AI orchestration (claude, gemini, codex)
-```
-
-## 📦 Operations
-
-- `docs/operations/health-check.md` – production checklists and runbook
-- `docs/operations/terminal-tool-catalog.md` – terminal and layer tool matrix
-- `docs/operations/troubleshooting.md` – known issues and recovery steps
-- `docs/operations/upgrade-and-rollback.md` – controlled upgrade strategy
-- `docs/platforms/` – OS-organized guides (`linux`, `macos`, `windows`)
-- `wiki/` – GitHub Wiki source pages (Home, sidebar, runbooks)
-- `scripts/publish-wiki.sh` – publish `wiki/` to GitHub Wiki via `gh`
-- `docs/layers/*.md` – per-layer installation and command usage
-- `context/` – research and reference snapshots
-
-## 📁 Project structure
-
-```text
-rld-better-terminal-ai-usage/
-├── scripts/
-│   ├── install.sh
-│   ├── install-windows.ps1
-│   ├── install-foundation.sh
-│   ├── install-layer-1.sh
-│   ├── install-layer-2.sh
-│   ├── install-layer-3.sh
-│   ├── install-layer-4.sh
-│   ├── install-layer-5.sh
-│   ├── health-check.sh
-│   ├── install-macos.sh
-│   ├── health-check-macos.sh
-│   ├── health-check-windows.ps1
-│   ├── macos/
-│   ├── windows/
-│   └── publish-wiki.sh
-├── configs/
-│   ├── fish/config.fish
-│   ├── wezterm/wezterm.lua
-│   └── starship/
-├── docs/
-│   ├── foundation/
-│   ├── layers/
-│   ├── operations/
-│   └── platforms/
-├── wiki/
-├── context/
-└── CHANGELOG.md
-```
-
-## 🛠 Troubleshooting
-
-- If a layer fails, resolve the blocker and re-run only the failed layer.
-- If config parity fails, compare local files with `configs/*`.
-- If third-party CLI commands fail, check:
-
-```bash
-./scripts/health-check.sh --summary
-```
-
-### Local CLI checks
-
-```bash
-command -v bat rg fzf gh lazygit delta claude codex
-```
-
-## 🤝 Contributing
-
-- open an issue: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/issues>
-- submit PRs with focused, verifiable changes.
-
-## 📄 License
-
-MIT License. See [LICENSE](LICENSE).
-
-## 🙌 Acknowledgements
-
-- WezTerm, Fish, and Starship teams and maintainers.
-- All tool maintainers and community contributors.
-
-<p align="center">
-  <strong>An open-source, user-agnostic terminal setup for AI-native cross-platform development workflows.</strong>
-</p>
+MIT — see [`LICENSE`](LICENSE).

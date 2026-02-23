@@ -33,7 +33,7 @@ This wiki is the operational playbook for `rld-better-terminal-ai-usage`.
 - README: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/blob/main/README.md>
 - Platform docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/platforms>
 - Operations docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/operations>
-- Layer docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/layers>
+- Linux reference docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/platforms/linux/reference>
 
 ## Wiki Maintenance
 

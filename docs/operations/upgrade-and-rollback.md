@@ -22,12 +22,12 @@ git pull --ff-only origin main
 3. Re-run installer layers in order.
 
 ```bash
-./scripts/install-foundation.sh
-./scripts/install-layer-1.sh
-./scripts/install-layer-2.sh
-./scripts/install-layer-3.sh
-./scripts/install-layer-4.sh
-./scripts/install-layer-5.sh
+./scripts/linux/install-foundation.sh
+./scripts/linux/install-layer-1.sh
+./scripts/linux/install-layer-2.sh
+./scripts/linux/install-layer-3.sh
+./scripts/linux/install-layer-4.sh
+./scripts/linux/install-layer-5.sh
 ```
 
 4. Run health-check and confirm success criteria.

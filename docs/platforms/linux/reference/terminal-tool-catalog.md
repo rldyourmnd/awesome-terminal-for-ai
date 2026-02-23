@@ -9,9 +9,9 @@ The tables below define Linux layer expectations.
 
 | Component | Layer | Install method | Verification | Rationale |
 |---|---|---|---|---|
-| WezTerm | Foundation | `scripts/install-foundation.sh` | `wezterm --version` | GPU-accelerated terminal with multiplexer and rich UI primitives. |
-| Fish | Foundation | `scripts/install-foundation.sh` | `fish --version` | Modern shell with fast startup and scriptable config model. |
-| Starship | Foundation | `scripts/install-foundation.sh` | `starship --version` | Cross-shell, lightweight prompt; prompt profile switching via `starship-profile`. |
+| WezTerm | Foundation | `scripts/linux/install-foundation.sh` | `wezterm --version` | GPU-accelerated terminal with multiplexer and rich UI primitives. |
+| Fish | Foundation | `scripts/linux/install-foundation.sh` | `fish --version` | Modern shell with fast startup and scriptable config model. |
+| Starship | Foundation | `scripts/linux/install-foundation.sh` | `starship --version` | Cross-shell, lightweight prompt; prompt profile switching via `starship-profile`. |
 
 ## Layer 1 Tools
 

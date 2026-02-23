@@ -21,19 +21,19 @@ This is the production implementation for Linux hosts.
 
 ## Layer Scripts
 
-- `scripts/install-foundation.sh`
-- `scripts/install-layer-1.sh`
-- `scripts/install-layer-2.sh`
-- `scripts/install-layer-3.sh`
-- `scripts/install-layer-4.sh`
-- `scripts/install-layer-5.sh`
+- `scripts/linux/install-foundation.sh`
+- `scripts/linux/install-layer-1.sh`
+- `scripts/linux/install-layer-2.sh`
+- `scripts/linux/install-layer-3.sh`
+- `scripts/linux/install-layer-4.sh`
+- `scripts/linux/install-layer-5.sh`
 
 ## Canonical Linux Docs
 
-- Foundation: `docs/foundation/foundation.md`
-- Layers: `docs/layers/`
+- Foundation: `docs/platforms/linux/reference/foundation.md`
+- Layers: `docs/platforms/linux/reference/layers/`
 - Operations: `docs/operations/`
-- Tool catalog (Linux): `docs/operations/terminal-tool-catalog.md`
+- Tool catalog (Linux): `docs/platforms/linux/reference/terminal-tool-catalog.md`
 
 ## Notes
 
@@ -63,7 +63,7 @@ For `yq` in Layer 1, you can pin checksum explicitly:
 
 ```bash
 export YQ_SHA256="<sha256-from-official-release>"
-./scripts/install-layer-1.sh
+./scripts/linux/install-layer-1.sh
 ```
 
 ## Recommended Linux Verification Flow

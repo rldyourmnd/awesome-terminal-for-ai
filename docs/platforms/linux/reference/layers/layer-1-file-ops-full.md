@@ -23,7 +23,7 @@ Layer 1 provides modern, high-performance replacements for classic Unix file too
 ### Quick Install
 
 ```bash
-./scripts/install-layer-1.sh
+./scripts/linux/install-layer-1.sh
 ```
 
 ### Manual Installation
@@ -524,5 +524,5 @@ After Layer 1 is complete:
 - **Layer 2: Productivity** - fzf, zoxide, atuin, uv, bun, watchexec, glow, bottom, hyperfine
 
 ```bash
-./scripts/install-layer-2.sh
+./scripts/linux/install-layer-2.sh
 ```

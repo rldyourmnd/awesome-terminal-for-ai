@@ -24,7 +24,7 @@ Required package/tool is missing.
 ```bash
 sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends <package>
-./scripts/install-layer-2.sh # or relevant layer
+./scripts/linux/install-layer-2.sh # or relevant layer
 ```
 
 Windows equivalent:
@@ -126,7 +126,7 @@ Corporate proxy/firewall limits release metadata fetch.
 - Re-run failing layer with explicit retries.
 
 ```bash
-CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt ./scripts/install-layer-3.sh
+CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt ./scripts/linux/install-layer-3.sh
 ```
 
 ### 7) `sg` exists but is not ast-grep

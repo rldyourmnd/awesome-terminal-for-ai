@@ -25,7 +25,7 @@ Layer 2 provides productivity tools that dramatically improve daily workflow:
 ### Quick Install
 
 ```bash
-./scripts/install-layer-2.sh
+./scripts/linux/install-layer-2.sh
 ```
 
 ### Manual Installation
@@ -394,5 +394,5 @@ After Layer 2 is complete:
 - **Layer 3: GitHub & Git** - gh CLI, lazygit, delta
 
 ```bash
-./scripts/install-layer-3.sh
+./scripts/linux/install-layer-3.sh
 ```

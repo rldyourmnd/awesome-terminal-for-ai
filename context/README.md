@@ -26,7 +26,7 @@ context/
 Operational runbooks are stored in `/docs/operations`:
 
 - `docs/operations/health-check.md`
-- `docs/operations/terminal-tool-catalog.md`
+- `docs/platforms/linux/reference/terminal-tool-catalog.md`
 - `docs/operations/troubleshooting.md`
 - `docs/operations/upgrade-and-rollback.md`
 
