@@ -7,7 +7,7 @@ scan_timeout = 60
 command_timeout = 1800
 continuation_prompt = "[▸▹ ](dimmed fg:overlay1)"
 
-format = """($nix_shell$container$directory$fill$git_metrics${custom.ai_stack}\n)$cmd_duration$status$sudo$jobs$username$hostname$localip$character"""
+format = """($nix_shell$container$directory$fill$git_metrics\n)$cmd_duration$status$sudo$jobs$username$hostname$localip$character"""
 
 right_format = """
 $os\
@@ -58,21 +58,6 @@ vimcmd_symbol = "[■](bold fg:blue)"
 vimcmd_replace_one_symbol = "[◌](bold fg:mauve)"
 vimcmd_replace_symbol = "[□](bold fg:mauve)"
 vimcmd_visual_symbol = "[▼](bold fg:yellow)"
-
-[custom.ai_stack]
-description = "Shows available AI CLIs"
-command = """
-parts=()
-command -v claude >/dev/null 2>&1 && parts+=(" CL")
-command -v gemini >/dev/null 2>&1 && parts+=(" GEM")
-command -v codex >/dev/null 2>&1 && parts+=(" CX")
-printf "%s" "${parts[*]}"
-"""
-when = """ command -v claude >/dev/null 2>&1 || command -v gemini >/dev/null 2>&1 || command -v codex >/dev/null 2>&1 """
-shell = ["bash", "--noprofile", "--norc", "-c"]
-use_stdin = false
-format = "[$output ]($style)"
-style = "bold fg:mauve"
 
 [cmd_duration]
 min_time = 300
@@ -130,7 +115,7 @@ Linux = ""
 Unknown = ""
 
 [directory]
-home_symbol = "/home/rldyourmnd"
+home_symbol = "~"
 truncate_to_repo = false
 truncation_length = 99
 truncation_symbol = ""
