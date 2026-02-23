@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- No unreleased changes yet.
+
+## [1.2.1] - 2026-02-23
+
 ### Fixed
 - Removed user-specific hardcoded paths from Fish, WezTerm, and Starship config templates so installs work on any Linux user account.
 - Switched Layer 1 `yq` install to user-local execution to reduce privileged-write failures on mixed environments.
@@ -20,10 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Expanded `scripts/health-check.sh` parity/command checks by adding `grepai` and fixed `--summary`/`--strict` exit behavior in non-verbose mode.
 - Expanded `scripts/health-check.sh` tool validation with `glow` to align with Layer 2 inventory.
 - Updated `README` and `context/*` state snapshots with fresh validation baseline and diagnostics.
-
-### Planned for 1.2.0
-- Terminal UI layer (window/chrome-level UI improvements beyond prompt)
-- Additional terminal UX polish for open-source default profile
 
 ## [1.1.0] - 2026-02-23
 
@@ -69,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.2.1
 [1.1.0]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.1.0
 [1.0.0]: https://github.com/rldyourmnd/rld-better-terminal-ai-usage/releases/tag/v1.0.0

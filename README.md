@@ -18,7 +18,7 @@
   <a href="#-architecture">Architecture</a> •
   <a href="#-operations">Operations</a> •
   <a href="#-troubleshooting">Troubleshooting</a> •
-  <a href="https://github.com/rldyourmnd/rld-better-terminal-ai-usage/wiki">Wiki</a>
+  <a href="#-contributing">Contributing</a>
 </p>
 
 <p align="center">
@@ -211,7 +211,6 @@ command -v bat rg fzf gh lazygit delta claude codex
 ## 🤝 Contributing
 
 - open an issue: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/issues>
-- start a discussion: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/discussions>
 - submit PRs with focused, verifiable changes.
 
 ## 📄 License
