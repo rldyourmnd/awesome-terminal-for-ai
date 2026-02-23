@@ -11,6 +11,10 @@
 
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
+local target = wezterm.target_triple or ''
+local is_windows = target:find('windows') ~= nil
+local is_macos = target:find('apple%-darwin') ~= nil
+local is_linux = not is_windows and not is_macos
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- GPU RENDERING - OpenGL for MAXIMUM STABILITY
@@ -32,7 +36,9 @@ end
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- CRITICAL: Different refresh rates across monitors cause GPU context loss
 -- under Wayland. XWayland is stable for NVIDIA multi-monitor setups.
-config.enable_wayland = false
+if is_linux then
+  config.enable_wayland = false
+end
 
 -- FALLBACK: If OpenGL still causes issues, use Software rendering
 -- Uncomment below to use CPU-based rendering (slower but most stable):
@@ -46,7 +52,6 @@ config.enable_wayland = false
 config.unix_domains = {
   {
     name = 'unix',
-    socket_path = '/tmp/wezterm-gui-sock',
     local_echo_threshold_ms = 10,  -- Predictive echo = feels instant
   },
 }
@@ -82,9 +87,10 @@ config.term = 'wezterm'
 config.enable_kitty_keyboard = true  -- Advanced keyboard protocol
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- DEFAULT SHELL - Fish as primary (auto-detect path)
+-- DEFAULT SHELL - platform-aware
 -- ═══════════════════════════════════════════════════════════════════════════════
--- Use `command -v` first, then fallback to common install locations.
+-- Windows: prefer pwsh/powershell.
+-- macOS/Linux: prefer fish when available.
 local function trim(s)
   return (s and s:match('^%s*(.-)%s*$')) or nil
 end
@@ -109,37 +115,47 @@ local function file_exists(path)
   return true
 end
 
-local fish_path = command_output('command -v fish 2>/dev/null')
-if not fish_path or fish_path == '' then
-  local homebrew_prefix = os.getenv('HOMEBREW_PREFIX')
-  local home_dir = os.getenv('HOME') or ''
-  local candidates = {
-    '/usr/bin/fish',
-    '/bin/fish',
-    '/usr/local/bin/fish',
-    '/usr/local/sbin/fish',
-    '/home/linuxbrew/.linuxbrew/bin/fish',
-    home_dir .. '/.linuxbrew/bin/fish',
-    '/opt/homebrew/bin/fish',
-  }
-
-  if homebrew_prefix then
-    table.insert(candidates, 1, homebrew_prefix .. '/bin/fish')
+if is_windows then
+  local pwsh_path = command_output('where pwsh 2>nul')
+  if pwsh_path and pwsh_path ~= '' then
+    config.default_prog = { pwsh_path, '-NoLogo' }
+  else
+    local powershell_path = command_output('where powershell 2>nul')
+    if powershell_path and powershell_path ~= '' then
+      config.default_prog = { powershell_path, '-NoLogo' }
+    end
   end
+else
+  local fish_path = command_output('command -v fish 2>/dev/null')
+  if not fish_path or fish_path == '' then
+    local homebrew_prefix = os.getenv('HOMEBREW_PREFIX')
+    local home_dir = os.getenv('HOME') or ''
+    local candidates = {
+      '/usr/bin/fish',
+      '/bin/fish',
+      '/usr/local/bin/fish',
+      '/usr/local/sbin/fish',
+      '/home/linuxbrew/.linuxbrew/bin/fish',
+      home_dir .. '/.linuxbrew/bin/fish',
+      '/opt/homebrew/bin/fish',
+    }
 
-  for _, candidate in ipairs(candidates) do
-    if file_exists(candidate) then
-      fish_path = candidate
-      break
+    if homebrew_prefix then
+      table.insert(candidates, 1, homebrew_prefix .. '/bin/fish')
+    end
+
+    for _, candidate in ipairs(candidates) do
+      if file_exists(candidate) then
+        fish_path = candidate
+        break
+      end
     end
   end
 
-  if not fish_path then
-    fish_path = '/usr/bin/fish'
+  if fish_path and fish_path ~= '' then
+    config.default_prog = { fish_path, '-l' }
   end
 end
-
-config.default_prog = { fish_path, '-l' }
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- REDUCE OVERHEAD (stable optimizations)
@@ -433,12 +449,21 @@ config.mouse_bindings = {
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- LAUNCH MENU
 -- ═══════════════════════════════════════════════════════════════════════════════
-config.launch_menu = {
-  { label = 'Fish', args = { 'fish' } },
-  { label = 'Zsh', args = { 'zsh' } },
-  { label = 'Bash', args = { 'bash' } },
-  { label = 'Python', args = { 'python3' } },
-  { label = 'Node', args = { 'node' } },
-}
+if is_windows then
+  config.launch_menu = {
+    { label = 'PowerShell 7', args = { 'pwsh', '-NoLogo' } },
+    { label = 'Windows PowerShell', args = { 'powershell.exe', '-NoLogo' } },
+    { label = 'Command Prompt', args = { 'cmd.exe' } },
+    { label = 'Node', args = { 'node' } },
+  }
+else
+  config.launch_menu = {
+    { label = 'Fish', args = { 'fish' } },
+    { label = 'Zsh', args = { 'zsh' } },
+    { label = 'Bash', args = { 'bash' } },
+    { label = 'Python', args = { 'python3' } },
+    { label = 'Node', args = { 'node' } },
+  }
+end
 
 return config
