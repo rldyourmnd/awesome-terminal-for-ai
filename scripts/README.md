@@ -2,6 +2,15 @@
 
 This directory is organized by operating system.
 
+## Canonical Entry Points
+
+Use these first:
+
+- Install: `scripts/install.sh` (OS dispatcher)
+- Health-check: `scripts/health-check.sh` (OS dispatcher)
+
+Platform wrappers (`install-macos.sh`, `install-windows.ps1`, `health-check-macos.sh`, `health-check-windows.ps1`) are convenience entrypoints.
+
 ## Canonical Implementations
 
 - Linux: `scripts/linux/`
