@@ -7,8 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added production-ready macOS implementation with layered installers and health-check:
+  - `scripts/macos/install.sh`
+  - `scripts/macos/install-foundation.sh`
+  - `scripts/macos/install-layer-{1..5}.sh`
+  - `scripts/macos/health-check.sh`
+  - Shared helper module: `scripts/macos/common.sh`
+- Added macOS wrapper entrypoints:
+  - `scripts/install-macos.sh`
+  - `scripts/health-check-macos.sh`
+- Added OS-organized platform documentation:
+  - `docs/platforms/linux/README.md`
+  - `docs/platforms/macos/README.md`
+  - `docs/platforms/windows/README.md` (placeholder)
+- Added wiki page for platform navigation: `wiki/Platform-Guide.md`
+
 ### Changed
-- No unreleased changes yet.
+- Root `scripts/install.sh` now auto-detects OS and delegates to macOS pipeline on Darwin.
+- Root `scripts/health-check.sh` now dispatches to macOS health-check on Darwin.
+- `README.md` reorganized by operating systems (Linux/macOS/Windows placeholder) with platform-specific install paths.
+- `docs/operations/terminal-tool-catalog.md` clarified as Linux-specific catalog with platform references.
+- `docs/operations/health-check.md` updated to document Linux/macOS health-check entrypoints.
 
 ## [1.2.2] - 2026-02-23
 

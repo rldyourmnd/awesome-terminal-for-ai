@@ -4,7 +4,7 @@ This report captures static and operational validation for repository bootstrap 
 
 ## Validation Timestamp
 
-- 2026-02-23T07:49:35+07:00
+- 2026-02-23T08:55:00+07:00
 
 ## Scope
 
@@ -17,8 +17,19 @@ Validated scripts:
 - `scripts/install-layer-3.sh`
 - `scripts/install-layer-4.sh`
 - `scripts/install-layer-5.sh`
+- `scripts/install-macos.sh`
 - `scripts/publish-wiki.sh`
 - `scripts/health-check.sh`
+- `scripts/health-check-macos.sh`
+- `scripts/macos/common.sh`
+- `scripts/macos/install.sh`
+- `scripts/macos/install-foundation.sh`
+- `scripts/macos/install-layer-1.sh`
+- `scripts/macos/install-layer-2.sh`
+- `scripts/macos/install-layer-3.sh`
+- `scripts/macos/install-layer-4.sh`
+- `scripts/macos/install-layer-5.sh`
+- `scripts/macos/health-check.sh`
 
 ## Checks Performed
 
@@ -27,7 +38,7 @@ Validated scripts:
 3. Shebang consistency (`#!/usr/bin/env bash`) on all scripts: PASS.
 4. Strict mode check (`set -euo pipefail`) on all scripts: PASS.
 5. Executable bit check (`chmod +x scripts/*.sh` and verify): PASS.
-6. Runtime validation via `./scripts/health-check.sh --summary`: PASS (64 passed, 3 warnings, 0 hard failures).
+6. Runtime validation via `./scripts/health-check.sh --summary`: PASS (76 passed, 2 warnings, 0 hard failures).
 7. Config parity check: FAIL (system files differ from repo templates):
    - `~/.wezterm.lua`
    - `~/.config/fish/config.fish`
@@ -38,10 +49,12 @@ Validated scripts:
 - `shellcheck` is not installed on this machine, so shellcheck linting was not executed.
 - Runtime end-to-end installation runs were not executed by default because scripts perform package installation and may require interactive `sudo` / network operations.
 - Known runtime findings:
-- `./scripts/health-check.sh --summary`: 64 passed, 3 warnings, 0 hard failures.
+- `./scripts/health-check.sh --summary`: 76 passed, 2 warnings, 0 hard failures.
 - Remaining warnings are config parity differences:
-  - `~/.wezterm.lua`
   - `~/.config/fish/config.fish`
   - `~/.config/starship.toml`
 - Wiki publication validation:
   - `scripts/publish-wiki.sh` successfully pushed pages to `rld-better-terminal-ai-usage.wiki.git`
+- OS split validation:
+  - macOS install/health-check scripts added under `scripts/macos/`
+  - root `scripts/install.sh` and `scripts/health-check.sh` now include OS dispatch behavior

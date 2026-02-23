@@ -4,7 +4,7 @@ Captured from the current machine and intended as the canonical "current state" 
 
 ## Captured At
 
-- Timestamp: 2026-02-23T07:49:35+07:00
+- Timestamp: 2026-02-23T08:55:00+07:00
 - Host profile: Linux, NVIDIA RTX 2070, i7-8750H, 32GB RAM
 
 ## Rendering and Shell Profile
@@ -71,9 +71,15 @@ The following official docs were consulted through Context7 for configuration va
 
 ## Health-Check Snapshot
 
-- `scripts/health-check.sh` status: PASS (3 warnings)
+- `scripts/health-check.sh` status: PASS (2 warnings)
 - Key warnings:
-  - Config parity mismatches for three user template files
+  - Config parity mismatches for two user template files (`fish`, `starship`)
+
+## Platform Layout Snapshot
+
+- Linux (Debian/Ubuntu): production implementation (`scripts/install*.sh`, `docs/platforms/linux/README.md`)
+- macOS: production implementation (`scripts/macos/*.sh`, `docs/platforms/macos/README.md`)
+- Windows: placeholder (`docs/platforms/windows/README.md`)
 
 ## Wiki Publication Snapshot
 
