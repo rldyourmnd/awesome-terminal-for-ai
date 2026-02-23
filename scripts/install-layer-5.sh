@@ -29,6 +29,34 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &>/dev/null; }
 
+apt_install() {
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
+}
+
+ensure_local_bin_on_path() {
+    PATH_EXPORT_LINE='export PATH="$HOME/.local/bin:$PATH"'
+    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+        touch ~/.bashrc
+        if ! grep -Fqx "$PATH_EXPORT_LINE" ~/.bashrc; then
+            echo "$PATH_EXPORT_LINE" >> ~/.bashrc
+        fi
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+}
+
+ensure_npm_user_prefix() {
+    if ! command_exists npm; then
+        return
+    fi
+
+    local current_prefix
+    current_prefix="$(npm config get prefix 2>/dev/null || true)"
+    if [ "$current_prefix" != "$HOME/.local" ]; then
+        npm config set prefix "$HOME/.local"
+    fi
+    ensure_local_bin_on_path
+}
+
 echo ""
 echo "════════════════════════════════════════════════════════════"
 echo "  LAYER 5: AI ORCHESTRATION"
@@ -45,8 +73,16 @@ log_info "Running preflight checks..."
 if ! command_exists npm; then
     log_warn "npm not found. Installing nodejs..."
     if sudo -n true 2>/dev/null; then
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-        sudo apt install -y nodejs
+        sudo apt-get update
+        if apt-cache show nodejs >/dev/null 2>&1 && apt-cache show npm >/dev/null 2>&1; then
+            apt_install nodejs npm
+        else
+            NODESOURCE_SETUP="$(mktemp)"
+            curl --proto '=https' --tlsv1.2 -fsSL https://deb.nodesource.com/setup_lts.x -o "$NODESOURCE_SETUP"
+            sudo -E bash "$NODESOURCE_SETUP"
+            rm -f "$NODESOURCE_SETUP"
+            apt_install nodejs
+        fi
     else
         log_error "npm requires sudo. Run manually:"
         echo "  curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -"
@@ -58,6 +94,7 @@ fi
 log_success "Preflight checks passed"
 log_info "Node.js version: $(node --version 2>/dev/null || echo 'unknown')"
 log_info "npm version: $(npm --version 2>/dev/null || echo 'unknown')"
+ensure_npm_user_prefix
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CLAUDE CODE - Anthropic AI CLI
@@ -65,7 +102,7 @@ log_info "npm version: $(npm --version 2>/dev/null || echo 'unknown')"
 log_info "Installing Claude Code..."
 
 if ! command_exists claude; then
-    npm install -g @anthropic-ai/claude-code
+    npm install -g --no-fund --no-audit --loglevel=error @anthropic-ai/claude-code
     log_success "Claude Code installed"
 else
     log_info "Claude Code already installed: $(claude --version 2>/dev/null | head -1 || echo 'installed')"
@@ -77,7 +114,7 @@ fi
 log_info "Installing Gemini CLI..."
 
 if ! command_exists gemini; then
-    npm install -g @google/gemini-cli
+    npm install -g --no-fund --no-audit --loglevel=error @google/gemini-cli
     log_success "Gemini CLI installed"
 else
     log_info "Gemini CLI already installed: $(gemini --version 2>/dev/null | head -1 || echo 'installed')"
@@ -89,7 +126,7 @@ fi
 log_info "Installing Codex CLI..."
 
 if ! command_exists codex; then
-    npm install -g @openai/codex
+    npm install -g --no-fund --no-audit --loglevel=error @openai/codex
     log_success "Codex CLI installed"
 else
     log_info "Codex CLI already installed: $(codex --version 2>/dev/null | head -1 || echo 'installed')"

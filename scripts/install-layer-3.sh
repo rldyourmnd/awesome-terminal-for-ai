@@ -29,6 +29,26 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &>/dev/null; }
 
+apt_install() {
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
+}
+
+install_rustup_if_missing() {
+    if command_exists cargo; then
+        return 0
+    fi
+
+    log_warn "cargo not found. Installing rust..."
+    RUSTUP_INSTALLER="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs -o "$RUSTUP_INSTALLER"
+    sh "$RUSTUP_INSTALLER" -y
+    rm -f "$RUSTUP_INSTALLER"
+
+    if [ -f "$HOME/.cargo/env" ]; then
+        . "$HOME/.cargo/env"
+    fi
+}
+
 arch_for_binary() {
     case "$(uname -m)" in
         x86_64|amd64)
@@ -57,8 +77,8 @@ log_info "Installing gh CLI..."
 
 if ! command_exists gh; then
     if sudo -n true 2>/dev/null; then
-        sudo apt update
-        sudo apt install -y gh
+        sudo apt-get update
+        apt_install gh
         log_success "gh CLI installed"
     else
         log_warn "gh CLI requires sudo. Run manually:"
@@ -79,20 +99,29 @@ if ! command_exists lazygit || lazygit --version 2>/dev/null | grep -q "unversio
 
     log_info "Downloading lazygit ${LAZYGIT_VERSION}..."
 
-    # Create temp directory
-    TEMP_DIR=$(mktemp -d)
-    cd "$TEMP_DIR"
+    TEMP_DIR="$(mktemp -d)"
 
     # Download and extract
     LAZYGIT_ARCH="$(arch_for_binary)"
     LAZYGIT_URL="https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION#v}_Linux_${LAZYGIT_ARCH}.tar.gz"
+    LAZYGIT_CHECKSUMS_URL="https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_VERSION}/checksums.txt"
 
-    if curl -sL "$LAZYGIT_URL" -o lazygit.tar.gz; then
-        tar xzf lazygit.tar.gz
+    if curl --proto '=https' --tlsv1.2 -fSsL "$LAZYGIT_URL" -o "$TEMP_DIR/lazygit.tar.gz"; then
+        if curl --proto '=https' --tlsv1.2 -fSsL "$LAZYGIT_CHECKSUMS_URL" -o "$TEMP_DIR/checksums.txt"; then
+            expected_sum="$(grep " $(basename "$LAZYGIT_URL")\$" "$TEMP_DIR/checksums.txt" | awk '{print $1}' | head -n 1 || true)"
+            if [ -n "$expected_sum" ]; then
+                echo "${expected_sum}  $TEMP_DIR/lazygit.tar.gz" | sha256sum -c -
+            else
+                log_warn "Could not resolve lazygit checksum from checksums.txt"
+            fi
+        else
+            log_warn "lazygit checksums.txt not found, continuing without checksum validation"
+        fi
 
+        tar -xzf "$TEMP_DIR/lazygit.tar.gz" -C "$TEMP_DIR"
         # Install to ~/.local/bin (no sudo needed)
         mkdir -p ~/.local/bin
-        mv lazygit ~/.local/bin/lazygit
+        mv "$TEMP_DIR/lazygit" ~/.local/bin/lazygit
         chmod +x ~/.local/bin/lazygit
 
         log_success "lazygit ${LAZYGIT_VERSION} installed to ~/.local/bin/"
@@ -101,7 +130,6 @@ if ! command_exists lazygit || lazygit --version 2>/dev/null | grep -q "unversio
     fi
 
     # Cleanup
-    cd - > /dev/null
     rm -rf "$TEMP_DIR"
 else
     log_info "lazygit already installed: $(lazygit --version 2>/dev/null | head -1)"
@@ -113,16 +141,8 @@ fi
 log_info "Installing delta..."
 
 if ! command_exists delta; then
-    # Check for cargo
-    if ! command_exists cargo; then
-        log_warn "cargo not found. Installing rust..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        if [ -f "$HOME/.cargo/env" ]; then
-            . "$HOME/.cargo/env"
-        fi
-    fi
-
-    cargo install git-delta
+    install_rustup_if_missing
+    cargo install --locked git-delta
     log_success "delta installed"
 else
     log_info "delta already installed: $(delta --version 2>/dev/null | head -1)"
@@ -134,7 +154,11 @@ fi
 log_info "Ensuring ~/.local/bin in PATH..."
 
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    PATH_EXPORT_LINE='export PATH="$HOME/.local/bin:$PATH"'
+    touch ~/.bashrc
+    if ! grep -Fqx "$PATH_EXPORT_LINE" ~/.bashrc; then
+        echo "$PATH_EXPORT_LINE" >> ~/.bashrc
+    fi
     export PATH="$HOME/.local/bin:$PATH"
     log_success "Added ~/.local/bin to PATH"
 fi
@@ -144,16 +168,19 @@ fi
 # ═══════════════════════════════════════════════════════════════════════════════
 log_info "Installing Catppuccin Mocha theme for bat..."
 
-BAT_THEMES_DIR="$(bat --config-dir 2>/dev/null)/themes"
-if [ -n "$BAT_THEMES_DIR" ]; then
+BAT_CONFIG_DIR="$(bat --config-dir 2>/dev/null || true)"
+BAT_THEMES_DIR="${BAT_CONFIG_DIR}/themes"
+if [ -n "$BAT_CONFIG_DIR" ]; then
     mkdir -p "$BAT_THEMES_DIR"
     if [ ! -f "$BAT_THEMES_DIR/Catppuccin Mocha.tmTheme" ]; then
-        curl -sL "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme" -o "$BAT_THEMES_DIR/Catppuccin Mocha.tmTheme"
+        curl --proto '=https' --tlsv1.2 -fSsL "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme" -o "$BAT_THEMES_DIR/Catppuccin Mocha.tmTheme"
         bat cache --build 2>/dev/null
         log_success "Catppuccin Mocha theme installed for bat"
     else
         log_info "Catppuccin Mocha theme already installed"
     fi
+else
+    log_warn "bat not available; skipping bat theme installation"
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════════

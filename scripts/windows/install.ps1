@@ -1,5 +1,6 @@
 param(
-    [Alias('dry-run')][switch]$DryRun
+    [Alias('dry-run')][switch]$DryRun,
+    [Alias('help', 'h')][switch]$Help
 )
 
 Set-StrictMode -Version Latest
@@ -9,6 +10,12 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $scriptDir 'common.ps1')
 
 Assert-Windows
+
+if ($Help) {
+    Write-Host 'Usage: .\scripts\install-windows.ps1 [-DryRun]'
+    Write-Host '  -DryRun   Validate the Windows flow without making changes'
+    exit 0
+}
 
 Write-Section 'WINDOWS INSTALLATION PIPELINE: Foundation + Layers 1..5'
 

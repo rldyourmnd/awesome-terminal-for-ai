@@ -68,6 +68,17 @@ jobs:
         run: |
           ./scripts/macos/install.sh --dry-run
 
+  linux-flow-smoke:
+    runs-on: ubuntu-latest
+    name: Linux Flow Smoke
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Linux installer flow (dry-run)
+        run: |
+          ./scripts/install.sh --dry-run
+
   windows-flow-smoke:
     runs-on: windows-latest
     name: Windows Flow Smoke

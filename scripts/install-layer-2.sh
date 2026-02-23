@@ -24,6 +24,26 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &>/dev/null; }
 
+apt_install() {
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
+}
+
+install_rustup_if_missing() {
+    if command_exists cargo; then
+        return 0
+    fi
+
+    log_warn "cargo not found. Installing rust..."
+    RUSTUP_INSTALLER="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs -o "$RUSTUP_INSTALLER"
+    sh "$RUSTUP_INSTALLER" -y
+    rm -f "$RUSTUP_INSTALLER"
+
+    if [ -f "$HOME/.cargo/env" ]; then
+        . "$HOME/.cargo/env"
+    fi
+}
+
 resolve_release_binary_url() {
     local repo="$1"
     local pattern="$2"
@@ -57,13 +77,7 @@ for cmd in curl git tar; do
 done
 
 # Check for cargo (needed for some tools)
-if ! command_exists cargo; then
-    log_warn "cargo not found. Installing rust..."
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    if [ -f "$HOME/.cargo/env" ]; then
-        . "$HOME/.cargo/env"
-    fi
-fi
+install_rustup_if_missing
 
 if ! command_exists cargo; then
     log_error "cargo still not available. Please install manually and re-run."
@@ -78,7 +92,12 @@ log_success "Preflight checks passed"
 log_info "Installing fzf..."
 
 if ! command_exists fzf; then
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    if [ -d "$HOME/.fzf/.git" ]; then
+        git -C "$HOME/.fzf" pull --ff-only
+    else
+        rm -rf "$HOME/.fzf"
+        git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+    fi
     ~/.fzf/install --key-bindings --completion --no-update-rc --no-bash --no-zsh
     log_success "fzf installed"
 else
@@ -91,7 +110,7 @@ fi
 log_info "Installing zoxide..."
 
 if ! command_exists zoxide; then
-    cargo install zoxide
+    cargo install --locked zoxide
     log_success "zoxide installed"
 else
     log_info "zoxide already installed"
@@ -103,7 +122,10 @@ fi
 log_info "Installing atuin..."
 
 if ! command_exists atuin; then
-    curl --proto '=https' --tlsv1.2 -sSf https://setup.atuin.sh | sh
+    ATUIN_INSTALLER="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://setup.atuin.sh -o "$ATUIN_INSTALLER"
+    sh "$ATUIN_INSTALLER"
+    rm -f "$ATUIN_INSTALLER"
     log_success "atuin installed"
 else
     log_info "atuin already installed"
@@ -115,7 +137,10 @@ fi
 log_info "Installing uv..."
 
 if ! command_exists uv; then
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+    UV_INSTALLER="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://astral.sh/uv/install.sh -o "$UV_INSTALLER"
+    sh "$UV_INSTALLER"
+    rm -f "$UV_INSTALLER"
     # Add to PATH for current session
     if [ -f "$HOME/.cargo/env" ]; then
         . "$HOME/.cargo/env"
@@ -131,7 +156,10 @@ fi
 log_info "Installing bun..."
 
 if ! command_exists bun; then
-    curl -fsSL https://bun.sh/install | bash
+    BUN_INSTALLER="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://bun.sh/install -o "$BUN_INSTALLER"
+    bash "$BUN_INSTALLER"
+    rm -f "$BUN_INSTALLER"
     # Add to PATH for current session
     export BUN_INSTALL="$HOME/.bun"
     export PATH="$BUN_INSTALL/bin:$PATH"
@@ -146,7 +174,7 @@ fi
 log_info "Installing watchexec..."
 
 if ! command_exists watchexec; then
-    cargo install watchexec-cli
+    cargo install --locked watchexec-cli
     log_success "watchexec installed"
 else
     log_info "watchexec already installed"
@@ -161,7 +189,7 @@ if ! command_exists glow; then
     if command_exists apt-cache; then
         if apt-cache show glow >/dev/null 2>&1; then
             log_info "Installing glow from apt..."
-            sudo apt install -y glow
+            apt_install glow
             log_success "glow installed"
         else
             log_warn "glow package is not available in apt repositories"
@@ -171,6 +199,7 @@ if ! command_exists glow; then
             GLOW_TMP_DIR="$(mktemp -d)"
             GLOW_ARCHIVE="$GLOW_TMP_DIR/glow.tar.gz"
             GLOW_ASSET_URL="$(resolve_release_binary_url "charmbracelet/glow" "glow.*${GLOW_VERSION#v}.*(linux|Linux).*(tar\\.gz)$")"
+            GLOW_CHECKSUMS_URL="$(resolve_release_binary_url "charmbracelet/glow" "checksums\\.txt$")"
 
             if [ -z "$GLOW_ASSET_URL" ]; then
                 log_error "Could not locate a suitable glow binary archive for ${GLOW_VERSION}"
@@ -178,7 +207,18 @@ if ! command_exists glow; then
                 exit 1
             fi
 
-            curl -fSsL "$GLOW_ASSET_URL" -o "$GLOW_ARCHIVE"
+            curl --proto '=https' --tlsv1.2 -fSsL "$GLOW_ASSET_URL" -o "$GLOW_ARCHIVE"
+            if [ -n "$GLOW_CHECKSUMS_URL" ]; then
+                curl --proto '=https' --tlsv1.2 -fSsL "$GLOW_CHECKSUMS_URL" -o "$GLOW_TMP_DIR/checksums.txt"
+                expected_sum="$(grep " $(basename "$GLOW_ASSET_URL")\$" "$GLOW_TMP_DIR/checksums.txt" | awk '{print $1}' | head -n 1 || true)"
+                if [ -n "$expected_sum" ]; then
+                    echo "${expected_sum}  ${GLOW_ARCHIVE}" | sha256sum -c -
+                else
+                    log_warn "Could not resolve checksum for $(basename "$GLOW_ASSET_URL"), continuing without checksum validation"
+                fi
+            else
+                log_warn "Glow checksums asset not found, continuing without checksum validation"
+            fi
             tar -xzf "$GLOW_ARCHIVE" -C "$GLOW_TMP_DIR"
 
             mkdir -p "$HOME/.local/bin"
@@ -210,7 +250,7 @@ fi
 log_info "Installing bottom..."
 
 if ! command_exists btm; then
-    cargo install bottom
+    cargo install --locked bottom
     log_success "bottom installed"
 else
     log_info "bottom already installed"
@@ -222,7 +262,7 @@ fi
 log_info "Installing hyperfine..."
 
 if ! command_exists hyperfine; then
-    cargo install hyperfine
+    cargo install --locked hyperfine
     log_success "hyperfine installed"
 else
     log_info "hyperfine already installed"
@@ -233,6 +273,15 @@ fi
 # ═══════════════════════════════════════════════════════════════════════════════
 log_info "Fish config uses conditional sourcing - no changes needed"
 log_info "Tools will be auto-detected on next shell startup"
+
+PATH_EXPORT_LINE='export PATH="$HOME/.local/bin:$PATH"'
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    touch ~/.bashrc
+    if ! grep -Fqx "$PATH_EXPORT_LINE" ~/.bashrc; then
+        echo "$PATH_EXPORT_LINE" >> ~/.bashrc
+    fi
+    export PATH="$HOME/.local/bin:$PATH"
+fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # VERIFICATION
@@ -259,7 +308,7 @@ for tool in $TOOLS; do
 done
 
 echo ""
-echo "Installed: $INSTALLED/8"
+echo "Installed: $INSTALLED/9"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # COMPLETE

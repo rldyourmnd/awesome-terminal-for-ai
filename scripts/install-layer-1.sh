@@ -24,6 +24,26 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &>/dev/null; }
 
+apt_install() {
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
+}
+
+install_rustup_if_missing() {
+    if command_exists cargo; then
+        return 0
+    fi
+
+    log_warn "cargo not found. Installing rust..."
+    RUSTUP_INSTALLER="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs -o "$RUSTUP_INSTALLER"
+    sh "$RUSTUP_INSTALLER" -y
+    rm -f "$RUSTUP_INSTALLER"
+
+    if [ -f "$HOME/.cargo/env" ]; then
+        . "$HOME/.cargo/env"
+    fi
+}
+
 arch_for_binary() {
     case "$(uname -m)" in
         x86_64 | amd64)
@@ -58,14 +78,7 @@ for cmd in curl apt; do
 done
 
 # Check for cargo (needed for sd)
-if ! command_exists cargo; then
-    log_warn "cargo not found. Installing rust..."
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    # Source cargo env for current session
-    if [ -f "$HOME/.cargo/env" ]; then
-        . "$HOME/.cargo/env"
-    fi
-fi
+install_rustup_if_missing
 
 # Verify cargo is available after potential install
 if ! command_exists cargo; then
@@ -81,32 +94,38 @@ log_success "Preflight checks passed"
 # ═══════════════════════════════════════════════════════════════════════════════
 log_info "Installing apt packages..."
 
-PACKAGES_TO_INSTALL=""
+PACKAGES_TO_INSTALL=()
+INSTALL_EZA_VIA_CARGO=false
 
 # Check each package
 if ! command_exists bat && ! command_exists batcat; then
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL bat"
+    PACKAGES_TO_INSTALL+=("bat")
 fi
 
 if ! command_exists fd; then
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL fd-find"
+    PACKAGES_TO_INSTALL+=("fd-find")
 fi
 
 if ! command_exists rg; then
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL ripgrep"
+    PACKAGES_TO_INSTALL+=("ripgrep")
 fi
 
 if ! command_exists jq; then
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL jq"
+    PACKAGES_TO_INSTALL+=("jq")
 fi
 
 if ! command_exists eza; then
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL eza"
+    if command_exists apt-cache && apt-cache show eza >/dev/null 2>&1; then
+        PACKAGES_TO_INSTALL+=("eza")
+    else
+        INSTALL_EZA_VIA_CARGO=true
+        log_warn "eza package is unavailable in apt. Will install via cargo fallback."
+    fi
 fi
 
-if [ -n "$PACKAGES_TO_INSTALL" ]; then
-    sudo apt update
-    sudo apt install -y $PACKAGES_TO_INSTALL
+if [ "${#PACKAGES_TO_INSTALL[@]}" -gt 0 ]; then
+    sudo apt-get update
+    apt_install "${PACKAGES_TO_INSTALL[@]}"
     log_success "Apt packages installed"
 else
     log_info "All apt packages already installed"
@@ -144,10 +163,17 @@ fi
 log_info "Installing sd (sed replacement)..."
 
 if ! command_exists sd; then
-    cargo install sd
+    cargo install --locked sd
     log_success "sd installed"
 else
     log_info "sd already installed"
+fi
+
+# eza cargo fallback
+if [ "$INSTALL_EZA_VIA_CARGO" = true ] && ! command_exists eza; then
+    log_info "Installing eza via cargo fallback..."
+    cargo install --locked eza
+    log_success "eza installed via cargo"
 fi
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -158,7 +184,10 @@ log_info "Installing yq..."
 if ! command_exists yq; then
     mkdir -p "$HOME/.local/bin"
     YQ_ARCH="$(arch_for_binary)"
-    curl -fSsL -o "$HOME/.local/bin/yq" "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${YQ_ARCH}"
+    curl --proto '=https' --tlsv1.2 -fSsL -o "$HOME/.local/bin/yq" "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${YQ_ARCH}"
+    if [ -n "${YQ_SHA256:-}" ]; then
+        echo "${YQ_SHA256}  $HOME/.local/bin/yq" | sha256sum -c -
+    fi
     chmod +x "$HOME/.local/bin/yq"
     log_success "yq installed"
 else
@@ -170,8 +199,12 @@ fi
 # ═══════════════════════════════════════════════════════════════════════════════
 log_info "Ensuring ~/.local/bin in PATH..."
 
+PATH_EXPORT_LINE='export PATH="$HOME/.local/bin:$PATH"'
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    touch ~/.bashrc
+    if ! grep -Fqx "$PATH_EXPORT_LINE" ~/.bashrc; then
+        echo "$PATH_EXPORT_LINE" >> ~/.bashrc
+    fi
     export PATH="$HOME/.local/bin:$PATH"
     log_success "Added ~/.local/bin to PATH"
 fi

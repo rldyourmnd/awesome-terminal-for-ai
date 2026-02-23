@@ -49,6 +49,9 @@ case "$OS_NAME" in
                     --strict)
                         PS_ARGS+=("-Strict")
                         ;;
+                    --help|-h)
+                        PS_ARGS+=("-Help")
+                        ;;
                     *)
                         PS_ARGS+=("$arg")
                         ;;
@@ -264,6 +267,53 @@ check_version_or_status() {
     fi
 }
 
+check_first_available_version() {
+    local primary="$1"
+    local fallback="$2"
+    local note="$3"
+    shift 3
+
+    if command_exists "$primary"; then
+        check_version_or_status "$primary" "$note" "$primary" "$@"
+        return
+    fi
+
+    if command_exists "$fallback"; then
+        check_version_or_status "$fallback" "$note" "$fallback" "$@"
+        return
+    fi
+
+    log_fail "$primary/$fallback missing from PATH"
+}
+
+check_ast_grep_runtime() {
+    local output status
+
+    if command_exists sg; then
+        set +e
+        output=$(sg --version 2>&1)
+        status=$?
+        set -e
+        if [[ $status -eq 0 && "$output" =~ ast-grep|ast_grep ]]; then
+            log_ok "ast-grep: ${output%%$'\n'*}"
+            return
+        fi
+    fi
+
+    if [[ -x "$HOME/.cargo/bin/sg" ]]; then
+        set +e
+        output=$("$HOME/.cargo/bin/sg" --version 2>&1)
+        status=$?
+        set -e
+        if [[ $status -eq 0 && "$output" =~ ast-grep|ast_grep ]]; then
+            log_ok "ast-grep (~/.cargo/bin/sg): ${output%%$'\n'*}"
+            return
+        fi
+    fi
+
+    log_fail "ast-grep missing or 'sg' points to non ast-grep binary"
+}
+
 check_semgrep_runtime() {
     if ! command_exists semgrep; then
         log_warn "semgrep missing"
@@ -377,8 +427,8 @@ log_info "Checking installed toolchain..."
 check_version_or_status "wezterm" "open command output" wezterm --version
 check_version_or_status "fish" "expected 'fish, version X.Y.Z'" fish --version
 check_version_or_status "starship" "expected 'starship X.Y.Z'" starship --version
-check_version_or_status "bat" "expected installed semantic" bat --version
-check_version_or_status "fdfind" "apt path may expose as fdfind" fdfind --version
+check_first_available_version "bat" "batcat" "expected installed semantic" --version
+check_first_available_version "fd" "fdfind" "fd may be provided by apt as fdfind" --version
 check_version_or_status "rg" "expected 'ripgrep X'" rg --version
 check_version_or_status "sd" "expected 'sd X.X.X'" sd --version
 check_version_or_status "jq" "expected 'jq-X.X.X'" jq --version
@@ -398,7 +448,7 @@ check_version_or_status "lazygit" "expected build metadata" lazygit --version
 check_version_or_status "delta" "expected 'delta X.X.X'" delta --version
 check_version_or_status "grepai" "expected 'grepai version X.X.X'" grepai version
 check_version_or_status "probe" "expected 'probe-code X'" probe --version
-check_version_or_status "sg" "expected 'ast-grep X.X.X'" sg --version
+check_ast_grep_runtime
 check_version_or_status "tokei" "expected 'tokei X.X.X'" tokei --version
 check_version_or_status "ctags" "ctags binary version" ctags --version
 check_version_or_status "node" "expected 'vX.X.X'" node --version

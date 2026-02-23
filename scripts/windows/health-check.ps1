@@ -1,6 +1,7 @@
 param(
     [Alias('summary')][switch]$Summary,
-    [Alias('strict')][switch]$Strict
+    [Alias('strict')][switch]$Strict,
+    [Alias('help', 'h')][switch]$Help
 )
 
 Set-StrictMode -Version Latest
@@ -10,6 +11,13 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $scriptDir 'common.ps1')
 
 Assert-Windows
+
+if ($Help) {
+    Write-Host 'Usage: .\scripts\health-check-windows.ps1 [-Summary] [-Strict]'
+    Write-Host '  -Summary  Print only counters and final status'
+    Write-Host '  -Strict   Fail on local-vs-repo config drift'
+    exit 0
+}
 
 $verboseMode = -not $Summary
 $passed = 0

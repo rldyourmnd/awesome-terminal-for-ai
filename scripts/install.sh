@@ -55,6 +55,9 @@ case "$OS_NAME" in
                     --dry-run)
                         PS_ARGS+=("-DryRun")
                         ;;
+                    --help|-h)
+                        PS_ARGS+=("-Help")
+                        ;;
                     *)
                         PS_ARGS+=("$arg")
                         ;;
@@ -82,6 +85,32 @@ if [[ "$OS_NAME" != "Linux" ]]; then
     exit 1
 fi
 
+print_usage() {
+    cat <<'EOF'
+Usage: ./scripts/install.sh [--dry-run] [--help]
+  --dry-run  Validate Linux flow without running installers
+  --help     Show this help
+EOF
+}
+
+DRY_RUN=false
+for arg in "$@"; do
+    case "$arg" in
+        --dry-run)
+            DRY_RUN=true
+            ;;
+        --help|-h)
+            print_usage
+            exit 0
+            ;;
+        *)
+            log_error "Unknown option: $arg"
+            print_usage
+            exit 1
+            ;;
+    esac
+done
+
 run_step() {
     local script_path="$1"
     local name
@@ -93,7 +122,11 @@ run_step() {
     fi
 
     log_info "Running ${name}..."
-    "$script_path"
+    if [[ "$DRY_RUN" == true ]]; then
+        log_info "[dry-run] would execute: $script_path"
+    else
+        "$script_path"
+    fi
     log_success "${name} complete"
 }
 
@@ -116,6 +149,11 @@ run_step "$PROJECT_DIR/scripts/install-layer-2.sh"
 run_step "$PROJECT_DIR/scripts/install-layer-3.sh"
 run_step "$PROJECT_DIR/scripts/install-layer-4.sh"
 run_step "$PROJECT_DIR/scripts/install-layer-5.sh"
+
+if [[ "$DRY_RUN" == true ]]; then
+    log_success "Linux dry-run flow validation PASS"
+    exit 0
+fi
 
 echo ""
 echo -e "${GREEN}════════════════════════════════════════════════════════════${NC}"

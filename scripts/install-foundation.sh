@@ -24,6 +24,11 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &>/dev/null; }
 
+# Non-interactive apt helper (Debian/Ubuntu)
+apt_install() {
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$@"
+}
+
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -56,14 +61,17 @@ log_info "Installing WezTerm..."
 
 if ! command_exists wezterm; then
     # Add GPG key
-    curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-archive-keyring.gpg
+    WEZTERM_GPG_KEY_TMP="$(mktemp)"
+    curl --proto '=https' --tlsv1.2 -fsSL https://apt.fury.io/wez/gpg.key -o "$WEZTERM_GPG_KEY_TMP"
+    sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-archive-keyring.gpg "$WEZTERM_GPG_KEY_TMP"
+    rm -f "$WEZTERM_GPG_KEY_TMP"
 
     # Add repository
     echo "deb [signed-by=/usr/share/keyrings/wezterm-archive-keyring.gpg] https://apt.fury.io/wez/ * *" | sudo tee /etc/apt/sources.list.d/wezterm.list
 
     # Install
-    sudo apt update
-    sudo apt install -y wezterm
+    sudo apt-get update
+    apt_install wezterm
 
     log_success "WezTerm installed"
 else
@@ -76,7 +84,7 @@ fi
 log_info "Installing Fish shell..."
 
 if ! command_exists fish; then
-    sudo apt install -y fish
+    apt_install fish
     log_success "Fish installed"
 else
     log_info "Fish already installed"
@@ -88,7 +96,10 @@ fi
 log_info "Installing Starship prompt..."
 
 if ! command_exists starship; then
-    curl -sS https://starship.rs/install.sh | sh
+    STARSHIP_INSTALLER="$(mktemp)"
+    trap 'rm -f "$STARSHIP_INSTALLER"' EXIT
+    curl --proto '=https' --tlsv1.2 -fsSL https://starship.rs/install.sh -o "$STARSHIP_INSTALLER"
+    sh "$STARSHIP_INSTALLER" -y
     log_success "Starship installed"
 else
     log_info "Starship already installed"
@@ -170,11 +181,19 @@ if [ -n "$FISH_PATH" ]; then
         log_info "Adding $FISH_PATH to /etc/shells..."
         echo "$FISH_PATH" | sudo tee -a /etc/shells > /dev/null
     fi
-    CURRENT_SHELL="$(getent passwd "$USER" | cut -d: -f7)"
+    CURRENT_SHELL="$(getent passwd "$USER" 2>/dev/null | cut -d: -f7 || true)"
+    if [ -z "$CURRENT_SHELL" ]; then
+        CURRENT_SHELL="${SHELL:-}"
+    fi
     if [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
         log_info "Setting Fish as default shell..."
-        sudo chsh -s "$FISH_PATH" "$USER"
-        log_success "Fish set as default shell"
+        if chsh -s "$FISH_PATH" >/dev/null 2>&1; then
+            log_success "Fish set as default shell"
+        elif sudo -n true 2>/dev/null && sudo chsh -s "$FISH_PATH" "$USER" >/dev/null 2>&1; then
+            log_success "Fish set as default shell (sudo)"
+        else
+            log_warn "Could not set Fish as default shell automatically. Run manually: chsh -s \"$FISH_PATH\""
+        fi
     else
         log_info "Fish is already the default shell"
     fi
