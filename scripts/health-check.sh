@@ -185,8 +185,8 @@ check_config_parity() {
 
 check_version_or_status() {
     local name="$1"
-    local cmd="$2"
-    local note="$3"
+    local note="$2"
+    shift 2
 
     if ! command_exists "$name"; then
         log_fail "$name missing from PATH"
@@ -194,9 +194,10 @@ check_version_or_status() {
     fi
 
     local output
+    local status=0
     set +e
-    output=$(eval "$cmd" 2>&1)
-    local status=$?
+    output=$("$@" 2>&1)
+    status=$?
     set -e
 
     if [[ $status -eq 0 && -n "$output" ]]; then
@@ -318,37 +319,37 @@ check_config_parity "$HOME/.config/starship.toml" "$PROJECT_DIR/configs/starship
 check_local_path_health
 
 log_info "Checking installed toolchain..."
-check_version_or_status "wezterm" "wezterm --version | head -1" "open command output"
-check_version_or_status "fish" "fish --version | head -1" "expected 'fish, version X.Y.Z'"
-check_version_or_status "starship" "starship --version | head -1" "expected 'starship X.Y.Z'"
-check_version_or_status "bat" "bat --version | head -1" "expected installed semantic"
-check_version_or_status "fdfind" "fdfind --version | head -1" "apt path may expose as fdfind"
-check_version_or_status "rg" "rg --version | head -1" "expected 'ripgrep X'"
-check_version_or_status "sd" "sd --version" "expected 'sd X.X.X'"
-check_version_or_status "jq" "jq --version" "expected 'jq-X.X.X'"
-check_version_or_status "yq" "yq --version | head -1" "expected 'yq version X'"
-check_version_or_status "eza" "eza --version | head -1" "expects package output"
-check_version_or_status "fzf" "fzf --version | head -1" "expected 'X.Y.Z'"
-check_version_or_status "glow" "glow --version" "expected glow markdown renderer version"
-check_version_or_status "zoxide" "zoxide --version | head -1" "expected 'zoxide X.X.X'"
-check_version_or_status "atuin" "atuin --version | head -1" "expected installed CLI version"
-check_version_or_status "uv" "uv --version | head -1" "expected 'uv X.X.X'"
-check_version_or_status "bun" "bun --version" "expected 'bun X.X.X'"
-check_version_or_status "watchexec" "watchexec --version | head -1" "expected installed runtime"
-check_version_or_status "btm" "btm --version | head -1" "expected 'bottom X.X.X'"
-check_version_or_status "hyperfine" "hyperfine --version | head -1" "expected 'hyperfine X.X.X'"
-check_version_or_status "gh" "gh --version | head -1" "expected 'gh version X.X.X'"
-check_version_or_status "lazygit" "lazygit --version 2>/dev/null | head -1" "expected build metadata"
-check_version_or_status "delta" "delta --version | head -1" "expected 'delta X.X.X'"
-check_version_or_status "grepai" "grepai version" "expected 'grepai version X.X.X'"
-check_version_or_status "probe" "probe --version | head -1" "expected 'probe-code X'"
-check_version_or_status "sg" "sg --version | head -1" "expected 'ast-grep X.X.X'"
-check_version_or_status "tokei" "tokei --version | head -1" "expected 'tokei X.X.X'"
-check_version_or_status "ctags" "ctags --version | head -1" "ctags binary version"
-check_version_or_status "node" "node --version | head -1" "expected 'vX.X.X'"
-check_version_or_status "npm" "npm --version | head -1" "expected NPM version"
-check_version_or_status "claude" "claude --version | head -1" "expected Claude CLI version"
-check_version_or_status "codex" "codex --version | head -1" "expected codex cli version"
+check_version_or_status "wezterm" "open command output" wezterm --version
+check_version_or_status "fish" "expected 'fish, version X.Y.Z'" fish --version
+check_version_or_status "starship" "expected 'starship X.Y.Z'" starship --version
+check_version_or_status "bat" "expected installed semantic" bat --version
+check_version_or_status "fdfind" "apt path may expose as fdfind" fdfind --version
+check_version_or_status "rg" "expected 'ripgrep X'" rg --version
+check_version_or_status "sd" "expected 'sd X.X.X'" sd --version
+check_version_or_status "jq" "expected 'jq-X.X.X'" jq --version
+check_version_or_status "yq" "expected 'yq version X'" yq --version
+check_version_or_status "eza" "expects package output" eza --version
+check_version_or_status "fzf" "expected 'X.Y.Z'" fzf --version
+check_version_or_status "glow" "expected glow markdown renderer version" glow --version
+check_version_or_status "zoxide" "expected 'zoxide X.X.X'" zoxide --version
+check_version_or_status "atuin" "expected installed CLI version" atuin --version
+check_version_or_status "uv" "expected 'uv X.X.X'" uv --version
+check_version_or_status "bun" "expected 'bun X.X.X'" bun --version
+check_version_or_status "watchexec" "expected installed runtime" watchexec --version
+check_version_or_status "btm" "expected 'bottom X.X.X'" btm --version
+check_version_or_status "hyperfine" "expected 'hyperfine X.X.X'" hyperfine --version
+check_version_or_status "gh" "expected 'gh version X.X.X'" gh --version
+check_version_or_status "lazygit" "expected build metadata" lazygit --version
+check_version_or_status "delta" "expected 'delta X.X.X'" delta --version
+check_version_or_status "grepai" "expected 'grepai version X.X.X'" grepai version
+check_version_or_status "probe" "expected 'probe-code X'" probe --version
+check_version_or_status "sg" "expected 'ast-grep X.X.X'" sg --version
+check_version_or_status "tokei" "expected 'tokei X.X.X'" tokei --version
+check_version_or_status "ctags" "ctags binary version" ctags --version
+check_version_or_status "node" "expected 'vX.X.X'" node --version
+check_version_or_status "npm" "expected NPM version" npm --version
+check_version_or_status "claude" "expected Claude CLI version" claude --version
+check_version_or_status "codex" "expected codex cli version" codex --version
 
 check_semgrep_runtime
 check_gemini_runtime
