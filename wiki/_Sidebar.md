@@ -1,4 +1,4 @@
-## Better Terminal Usage Wiki
+## Awesome Terminal for AI Wiki
 
 - [Home](Home)
 - [Platform Guide](Platform-Guide)

@@ -14,24 +14,24 @@
 ### Linux
 
 ```bash
-git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
-cd rld-better-terminal-ai-usage
+git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
+cd awesome-terminal-for-ai
 ./scripts/install.sh
 ```
 
 ### macOS
 
 ```bash
-git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
-cd rld-better-terminal-ai-usage
+git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
+cd awesome-terminal-for-ai
 ./scripts/install.sh
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-git clone https://github.com/rldyourmnd/rld-better-terminal-ai-usage.git
-cd rld-better-terminal-ai-usage
+git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
+cd awesome-terminal-for-ai
 .\scripts\install-windows.ps1
 ```
 

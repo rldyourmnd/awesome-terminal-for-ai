@@ -1,6 +1,6 @@
-# Better Terminal Usage Wiki
+# Awesome Terminal for AI Wiki
 
-This wiki is the operational playbook for `rld-better-terminal-ai-usage`.
+This wiki is the operational playbook for `awesome-terminal-for-ai`.
 
 ## Scope
 
@@ -30,10 +30,10 @@ This wiki is the operational playbook for `rld-better-terminal-ai-usage`.
 
 ## Canonical Sources
 
-- README: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/blob/main/README.md>
-- Platform docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/platforms>
-- Operations docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/operations>
-- Linux reference docs: <https://github.com/rldyourmnd/rld-better-terminal-ai-usage/tree/main/docs/platforms/linux/reference>
+- README: <https://github.com/rldyourmnd/awesome-terminal-for-ai/blob/main/README.md>
+- Platform docs: <https://github.com/rldyourmnd/awesome-terminal-for-ai/tree/main/docs/platforms>
+- Operations docs: <https://github.com/rldyourmnd/awesome-terminal-for-ai/tree/main/docs/operations>
+- Linux reference docs: <https://github.com/rldyourmnd/awesome-terminal-for-ai/tree/main/docs/platforms/linux/reference>
 
 ## Wiki Maintenance
 
