@@ -40,7 +40,7 @@ echo ""
 # ═══════════════════════════════════════════════════════════════════════════════
 log_info "Running preflight checks..."
 
-for cmd in curl wget sudo; do
+for cmd in curl sudo; do
     if ! command_exists "$cmd"; then
         log_error "$cmd is required but not installed"
         exit 1
@@ -137,8 +137,8 @@ fi
 
 # Copy Starship config
 if [ -f "$PROJECT_DIR/configs/starship/starship.toml" ]; then
-    # Validate no duplicate sections before copying
-    DUPLICATES=$(awk '/^\[/{if(seen[$0]++)print}' "$PROJECT_DIR/configs/starship/starship.toml")
+    # Validate no duplicate top-level sections before copying
+    DUPLICATES=$(awk '/^\[[^[]/{if(seen[$0]++)print}' "$PROJECT_DIR/configs/starship/starship.toml")
     if [ -n "$DUPLICATES" ]; then
         log_warn "Starship config has duplicate sections: $DUPLICATES"
         log_warn "Please fix the config file before proceeding"

@@ -167,7 +167,7 @@ if ! command_exists glow; then
             log_warn "glow package is not available in apt repositories"
 
             GLOW_VERSION="$(curl -fsSL https://api.github.com/repos/charmbracelet/glow/releases/latest \
-              | grep -oP '\"tag_name\": \"\\K(.*)(?=\")' || echo "v2.1.2")"
+              | grep -oP '\"tag_name\": \"\\K(.*)(?=\")' || echo "v2.1.1")"
             GLOW_TMP_DIR="$(mktemp -d)"
             GLOW_ARCHIVE="$GLOW_TMP_DIR/glow.tar.gz"
             GLOW_ASSET_URL="$(resolve_release_binary_url "charmbracelet/glow" "glow.*${GLOW_VERSION#v}.*(linux|Linux).*(tar\\.gz)$")"

@@ -32,6 +32,20 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &>/dev/null; }
 
+arch_for_binary() {
+    case "$(uname -m)" in
+        x86_64|amd64)
+            echo x86_64
+            ;;
+        aarch64|arm64|armv8*|armv7*)
+            echo arm64
+            ;;
+        *)
+            echo x86_64
+            ;;
+    esac
+}
+
 echo ""
 echo "════════════════════════════════════════════════════════════"
 echo "  LAYER 4: CODE INTELLIGENCE"
@@ -164,7 +178,8 @@ if ! command_exists grepai && [ ! -f ~/.local/bin/grepai ]; then
     TEMP_DIR=$(mktemp -d)
     cd "$TEMP_DIR"
 
-    GREPAI_URL="https://github.com/yoanbernabeu/grepai/releases/download/${GREPAI_VERSION}/grepai_${GREPAI_VERSION#v}_linux_amd64.tar.gz"
+    GREPAI_ARCH="$(arch_for_binary)"
+    GREPAI_URL="https://github.com/yoanbernabeu/grepai/releases/download/${GREPAI_VERSION}/grepai_${GREPAI_VERSION#v}_linux_${GREPAI_ARCH}.tar.gz"
 
     if curl -sSL -o grepai.tar.gz "$GREPAI_URL"; then
         tar xzf grepai.tar.gz

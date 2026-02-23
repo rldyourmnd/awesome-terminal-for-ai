@@ -29,6 +29,20 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Check if command exists
 command_exists() { command -v "$1" &>/dev/null; }
 
+arch_for_binary() {
+    case "$(uname -m)" in
+        x86_64|amd64)
+            echo x86_64
+            ;;
+        aarch64|arm64|armv8*|armv7*)
+            echo arm64
+            ;;
+        *)
+            echo x86_64
+            ;;
+    esac
+}
+
 echo ""
 echo "════════════════════════════════════════════════════════════"
 echo "  LAYER 3: GITHUB & GIT"
@@ -70,7 +84,8 @@ if ! command_exists lazygit || lazygit --version 2>/dev/null | grep -q "unversio
     cd "$TEMP_DIR"
 
     # Download and extract
-    LAZYGIT_URL="https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION#v}_Linux_x86_64.tar.gz"
+    LAZYGIT_ARCH="$(arch_for_binary)"
+    LAZYGIT_URL="https://github.com/jesseduffield/lazygit/releases/download/${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION#v}_Linux_${LAZYGIT_ARCH}.tar.gz"
 
     if curl -sL "$LAZYGIT_URL" -o lazygit.tar.gz; then
         tar xzf lazygit.tar.gz
