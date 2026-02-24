@@ -1,144 +1,106 @@
-# Awesome Terminal for AI
+# rldyourterm
 
-<p align="center">
-  <a href="https://github.com/rldyourmnd/awesome-terminal-for-ai">
-    <img src="docs/assets/terminal-screenshot.png" alt="Terminal screenshot" width="100%">
-  </a>
-</p>
+## Overview
 
-<p align="center">
-  <strong>Cross-platform terminal environment for Linux, macOS, and Windows with OS-first structure, layered installers, and production-grade validation.</strong>
-</p>
+`rldyourterm` is a high-performance terminal platform with a strong focus on:
 
-<p align="center">
-  <a href="https://github.com/rldyourmnd/awesome-terminal-for-ai/actions/workflows/ci.yml">
-    <img src="https://img.shields.io/github/actions/workflow/status/rldyourmnd/awesome-terminal-for-ai/ci.yml?branch=main&style=for-the-badge" alt="CI">
-  </a>
-  <a href="https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v2.0.4">
-    <img src="https://img.shields.io/badge/release-v2.0.4-2ea44f?style=for-the-badge" alt="Release 2.0.4">
-  </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/rldyourmnd/awesome-terminal-for-ai?style=for-the-badge" alt="License">
-  </a>
-</p>
+- low-latency rendering and smooth input/output
+- cross-platform consistency (Linux, macOS, Windows)
+- GPU-accelerated graphics pipeline
+- operational reliability for daily and production workflows
 
-## OS-First Navigation
+It combines a terminal engine, configuration model, launcher scripts, and
+distribution workflow in a single repository.
 
-| Platform | Status | Install | Dry-run | Health check | Docs |
-| --- | --- | --- | --- | --- | --- |
-| Linux (Debian/Ubuntu) | Production | `./scripts/install.sh` | `./scripts/install.sh --dry-run` | `./scripts/health-check.sh --summary` | [`docs/platforms/linux/README.md`](docs/platforms/linux/README.md) |
-| macOS | Production | `./scripts/install.sh` or `./scripts/install-macos.sh` | `./scripts/macos/install.sh --dry-run` | `./scripts/health-check-macos.sh --summary` | [`docs/platforms/macos/README.md`](docs/platforms/macos/README.md) |
-| Windows (PowerShell + WinGet) | Production | `.\scripts\install-windows.ps1` | `.\scripts\install-windows.ps1 -DryRun` | `.\scripts\health-check-windows.ps1 -Summary` | [`docs/platforms/windows/README.md`](docs/platforms/windows/README.md) |
+## Repository Purpose
 
-## What You Get
+This repository delivers a production-ready terminal distribution and maintenance
+framework, including:
 
-- WezTerm + shell + Starship baseline.
-- Deterministic 5-layer tooling model.
-- OS-dispatched installers with platform-specific implementations.
-- Built-in health checks and CI smoke coverage for Linux/macOS/Windows.
-- Linux NVML recovery utility for `nvidia-smi` runtime issues.
+- terminal source and CLI tooling
+- runtime packaging and release automation
+- platform-aware installers and health checks
+- documentation, reference guides, and operational runbooks
 
-## Quick Start
+The project is intentionally pragmatic: stable defaults, predictable upgrades, and
+repeatable setup for local and team usage.
 
-### Linux
+## Design Pillars
+
+### Performance and Stability
+
+- Minimized startup and interaction latency through Rust-centered architecture.
+- GPU rendering path for advanced graphics workloads.
+- Deterministic startup/install flow with explicit health checks.
+- Careful dependency pinning and regular lockfile hygiene.
+
+### Cross-Platform Engineering
+
+- Separate platform layers with shared orchestration.
+- Native script entrypoints for Linux, macOS, and Windows.
+- Consistent configuration and validation model across all targets.
+
+### Developer Velocity
+
+- Clear folder layout for tooling, configuration, docs, and release operations.
+- Reproducible environment bootstrap steps.
+- Structured contributor guidance and security/documentation standards.
+
+## Getting Started
+
+Clone the repository and run:
 
 ```bash
-git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
-cd awesome-terminal-for-ai
-./scripts/install.sh
+git clone https://github.com/rldyourmnd/rldyourterm.git
+cd rldyourterm
 ```
 
-### macOS
+Use the platform-specific installer/health scripts under `scripts/`:
 
-```bash
-git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
-cd awesome-terminal-for-ai
-./scripts/install.sh
-```
+- `./scripts/install.sh` for Linux/macOS dispatcher entry
+- `.\scripts\install.ps1` on Windows
+- `./scripts/health-check.sh` or platform-specific equivalents
 
-### Windows (PowerShell)
+Run dry-run mode first to validate environment before applying changes.
 
-```powershell
-git clone https://github.com/rldyourmnd/awesome-terminal-for-ai.git
-cd awesome-terminal-for-ai
-.\scripts\install-windows.ps1
-```
-
-## Structure (Clean OS Layout)
+## Project Structure
 
 ```text
-scripts/
-├── install.sh                     # OS dispatcher
-├── health-check.sh                # OS dispatcher
-├── linux/                         # Linux canonical implementation
-├── macos/                         # macOS canonical implementation
-├── windows/                       # Windows canonical implementation
-├── shared/                        # cross-platform helper scripts
-├── install-macos.sh               # wrapper
-├── install-windows.ps1            # wrapper
-├── health-check-macos.sh          # wrapper
-└── health-check-windows.ps1       # wrapper
-
-docs/
-├── README.md                      # docs navigation index
-├── platforms/
-│   ├── linux/
-│   │   ├── README.md
-│   │   └── reference/             # Linux foundation + layers reference
-│   ├── macos/README.md
-│   └── windows/README.md
-├── operations/
-└── assets/
-
-wiki/                              # wiki source (published via script)
+.
+├── rldyourterm/                    # Terminal source (submodule content)
+├── scripts/                        # Installers, health checks, launch helpers
+├── docs/                           # Architecture and usage documentation
+├── wiki/                           # Extended operational knowledge base
+├── configs/                        # Default configuration layers
+└── .github/                        # CI and contribution workflows
 ```
 
-## Layer Model
+## Versioning
 
-| Layer | Scope |
-| --- | --- |
-| Foundation | Terminal + shell + prompt baseline |
-| Layer 1 | File operations (`bat`, `fd`, `rg`, `sd`, `jq`, `yq`, `eza`) |
-| Layer 2 | Productivity (`fzf`, `zoxide`, `atuin`, `uv`, `bun`, `watchexec`, `glow`, `btm`, `hyperfine`) |
-| Layer 3 | GitHub/Git (`gh`, `lazygit`, `delta`) |
-| Layer 4 | Code intelligence (`grepai`, `ast-grep`, `probe`, `semgrep`, `ctags`, `tokei`) |
-| Layer 5 | AI orchestration (`claude`, `gemini`, `codex`) |
+The repository is currently aligned to `1.0.0` and targets stable, backward-consistent upgrades.
 
-## Validation and Quality Gates
+## Build and Run
 
-- Local:
+Build commands are defined in `Makefile` and platform scripts. For a regular workspace
+build from inside `rldyourterm`:
 
 ```bash
-./scripts/install.sh --dry-run
-./scripts/health-check.sh --strict --summary
-./scripts/linux/fix-nvidia-nvml.sh   # Linux, optional recovery
+cd rldyourterm
+cargo build --workspace --release
 ```
 
-- CI (`.github/workflows/ci.yml`):
-  - shell lint + syntax checks,
-  - markdown lint,
-  - link check,
-  - Linux/macOS/Windows flow smoke.
-
-## Documentation and Wiki
-
-- Docs index: [`docs/README.md`](docs/README.md)
-- Platform docs: [`docs/platforms/`](docs/platforms/)
-- Operations runbooks: [`docs/operations/`](docs/operations/)
-- Wiki source: [`wiki/`](wiki/)
-- Wiki publish: `./scripts/publish-wiki.sh`
-  - requires `gh` installed and authenticated (`gh auth status`)
-
-## Compatibility Notes
-
-Linux layer scripts are now canonical under `scripts/linux/*` (root-level legacy Linux layer wrappers were removed for cleaner UX).
+Check release notes and operational runbooks in `docs/operations/` before upgrading major
+dependencies or toolchain baselines.
 
 ## Contributing
 
-- Read [`CONTRIBUTING.md`](CONTRIBUTING.md)
-- Read [`SECURITY.md`](SECURITY.md)
-- Open issues: <https://github.com/rldyourmnd/awesome-terminal-for-ai/issues>
+- Review `CONTRIBUTING.md` and `SECURITY.md`.
+- Open issues and follow project-specific triage guidance in repository docs.
+- Align changes with existing naming, scripting, and documentation standards.
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+See `LICENSE.md`.
+
+Version: 1.0.0
+Special thanks to WezTerm for the architectural foundation that inspired this project.

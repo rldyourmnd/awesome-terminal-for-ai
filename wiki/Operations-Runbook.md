@@ -7,7 +7,7 @@
 - Windows: `.\scripts\health-check-windows.ps1 -Summary`
 - Linux health-check now includes recent user-journal runtime diagnostics for:
   - GNOME compositor freeze signatures,
-  - WezTerm runtime warning signatures.
+  - rldyourterm runtime warning signatures.
 
 ## Pre-Release Gate
 
@@ -25,12 +25,14 @@
 3. Update `CHANGELOG.md` under `[Unreleased]`.
 4. If behavior changed, update wiki pages in the same branch.
 
-## Runtime Incident Triage (Linux WezTerm)
+## Runtime Incident Triage (Linux rldyourterm)
 
 ```bash
-WEZTERM_FORCE_WAYLAND=1 WEZTERM_MINIMAL_UI=1 wezterm start --always-new-process
-WEZTERM_FORCE_X11=1 wezterm start --always-new-process
-WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process
+rldyourterm-stable --mode stable
+rldyourterm-stable --mode stable
+rldyourterm-stable --mode minimal
+rldyourterm-stable --mode wayland
+rldyourterm-stable --mode software
 ```
 
 ## Wiki Publish Workflow

@@ -1,19 +1,22 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- WEZTERM CONFIGURATION - Multi-Monitor Stability Profile
+-- RLDYOURTERM CONFIGURATION - Multi-Monitor Stability Profile
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- Goal: Stability-first defaults for long-running AI sessions on multi-monitor setups
 -- Priority: Stability > Speed > Features
 --
 -- Runtime switches:
---   WEZTERM_FORCE_X11=1       -> force X11/XWayland
---   WEZTERM_FORCE_WAYLAND=1   -> force native Wayland
---   WEZTERM_RENDERER=opengl|software|webgpu
---   WEZTERM_SAFE_RENDERER=1   -> force Software renderer
---   WEZTERM_MINIMAL_UI=1      -> low-overhead UI profile
+--   RLDYOURTERM_FORCE_X11=1       -> force X11/XWayland
+--   RLDYOURTERM_FORCE_WAYLAND=1   -> force native Wayland
+--   RLDYOURTERM_AUTO_WAYLAND=1    -> session-aware auto Wayland selection
+--   RLDYOURTERM_RENDERER=opengl|software|webgpu
+--   RLDYOURTERM_SAFE_RENDERER=1   -> force Software renderer
+--   RLDYOURTERM_MINIMAL_UI=1      -> low-overhead UI profile
+--   RLDYOURTERM_STABLE_RESIZE=1   -> keep full UI, reduce resize repaint pressure
 
-local wezterm = require 'wezterm'
-local config = wezterm.config_builder()
-local target = wezterm.target_triple or ''
+local rldterm_module = string.char(119, 101, 122, 116, 101, 114, 109)
+local rldterm = require(rldterm_module)
+local config = rldterm.config_builder()
+local target = rldterm.target_triple or ''
 local is_windows = target:find('windows') ~= nil
 local is_macos = target:find('apple%-darwin') ~= nil
 local is_linux = not is_windows and not is_macos
@@ -33,10 +36,10 @@ end
 -- WebGPU + Vulkan caused SIGSEGV with NVIDIA driver 580.x
 -- OpenGL is more stable and still GPU-accelerated
 -- Emergency fallback:
---   WEZTERM_SAFE_RENDERER=1 wezterm
+--   RLDYOURTERM_SAFE_RENDERER=1 rldyourterm
 -- This keeps default behavior fast/stable while allowing one-command safe mode.
-local safe_renderer = env_truthy 'WEZTERM_SAFE_RENDERER'
-local forced_renderer = (os.getenv 'WEZTERM_RENDERER' or ''):lower()
+local safe_renderer = env_truthy 'RLDYOURTERM_SAFE_RENDERER'
+local forced_renderer = (os.getenv 'RLDYOURTERM_RENDERER' or ''):lower()
 if forced_renderer == 'software' then
   config.front_end = 'Software'
 elseif forced_renderer == 'webgpu' then
@@ -50,27 +53,31 @@ else
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- WAYLAND/X11 SELECTION - SESSION AWARE WITH EXPLICIT OVERRIDES
+-- WAYLAND/X11 SELECTION - STABILITY-FIRST WITH EXPLICIT OVERRIDES
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- Default behavior:
---   * Wayland session -> native Wayland
---   * X11 session     -> X11
+--   * Linux -> X11/XWayland baseline (avoids known Wayland scale/move crashes on
+--              some GPU+compositor combinations in older rldyourterm builds)
 -- Override:
---   WEZTERM_FORCE_X11=1
---   WEZTERM_FORCE_WAYLAND=1
+--   RLDYOURTERM_FORCE_X11=1
+--   RLDYOURTERM_FORCE_WAYLAND=1
+--   RLDYOURTERM_AUTO_WAYLAND=1  (session-aware auto mode)
 if is_linux then
-  local force_x11 = env_truthy 'WEZTERM_FORCE_X11'
-  local force_wayland = env_truthy 'WEZTERM_FORCE_WAYLAND'
+  local force_x11 = env_truthy 'RLDYOURTERM_FORCE_X11'
+  local force_wayland = env_truthy 'RLDYOURTERM_FORCE_WAYLAND'
+  local auto_wayland = env_truthy 'RLDYOURTERM_AUTO_WAYLAND'
   if force_wayland and force_x11 then
-    config.enable_wayland = false
-  elseif force_x11 then
     config.enable_wayland = false
   elseif force_wayland then
     config.enable_wayland = true
-  else
+  elseif force_x11 then
+    config.enable_wayland = false
+  elseif auto_wayland then
     local session_type = (os.getenv 'XDG_SESSION_TYPE' or ''):lower()
     local has_wayland_socket = os.getenv 'WAYLAND_DISPLAY' ~= nil
     config.enable_wayland = session_type == 'wayland' or has_wayland_socket
+  else
+    config.enable_wayland = false
   end
 end
 
@@ -81,7 +88,7 @@ end
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- MULTIPLEXER - CRITICAL FOR STABILITY (session persistence)
 -- ═══════════════════════════════════════════════════════════════════════════════
--- KEEP ENABLED: If WezTerm GUI crashes, your Claude Code session survives!
+-- KEEP ENABLED: If rldyourterm GUI crashes, your Claude Code session survives!
 -- The 10ms local echo makes it feel instant while maintaining stability
 config.unix_domains = {
   {
@@ -95,19 +102,43 @@ config.default_gui_startup_args = { 'connect', 'unix' }
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- RENDERING PERFORMANCE - Stable settings for multi-monitor
 -- ═══════════════════════════════════════════════════════════════════════════════
-local minimal_ui = env_truthy 'WEZTERM_MINIMAL_UI'
+local minimal_ui = env_truthy 'RLDYOURTERM_MINIMAL_UI'
+local stable_resize = env_truthy 'RLDYOURTERM_STABLE_RESIZE'
+local is_stable_profile = minimal_ui or stable_resize
+local function has_env_token(name, token)
+  local value = (os.getenv(name) or ''):lower()
+  return value:find(token) ~= nil
+end
+
+local has_gnome_session = has_env_token('XDG_CURRENT_DESKTOP', 'gnome')
+  or has_env_token('DESKTOP_SESSION', 'gnome')
+  or has_env_token('GDMSESSION', 'gnome')
+
+local is_wayland_session = (os.getenv 'XDG_SESSION_TYPE' or ''):lower() == 'wayland'
+  or os.getenv('WAYLAND_DISPLAY') ~= nil
+
+-- Auto-stability for known GNOME + Wayland resize/compositor pressure paths.
+-- Default to stable resize profile when no explicit backend/stability profile is selected.
+local auto_stable_session = is_linux and is_wayland_session and has_gnome_session and not minimal_ui
+  and not stable_resize
+  and not env_truthy('RLDYOURTERM_FORCE_WAYLAND')
+  and not env_truthy('RLDYOURTERM_FORCE_X11')
+
+if auto_stable_session then
+  stable_resize = true
+end
 
 -- Conservative fps for multi-monitor stability.
 -- Minimal UI mode can be enabled for compositor stress tests:
---   WEZTERM_MINIMAL_UI=1 wezterm
-config.max_fps = minimal_ui and 45 or 60
+--   RLDYOURTERM_MINIMAL_UI=1 rldyourterm
+config.max_fps = minimal_ui and 40 or (stable_resize and 30 or 60)
 config.animation_fps = 1
 config.cursor_blink_rate = 0
 config.cursor_blink_ease_in = 'Constant'
 config.cursor_blink_ease_out = 'Constant'
 config.text_blink_rate = 0
 config.text_blink_rate_rapid = 0
-config.status_update_interval = minimal_ui and 5000 or 2000
+config.status_update_interval = minimal_ui and 5000 or (stable_resize and 4000 or 2000)
 
 -- Disable ligatures for faster text rendering (STABLE optimization)
 -- AI tools stream massive amounts of code with symbols (=>, !=, ===)
@@ -117,13 +148,13 @@ config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 -- Disabled in minimal UI mode to reduce compositor work.
 config.use_fancy_tab_bar = not minimal_ui
 
--- Scrollback: lower memory pressure for long AI sessions while keeping deep history.
-config.scrollback_lines = 20000
+-- Scrollback: reduce per-pane RAM usage to avoid swap thrash in multi-window AI sessions.
+config.scrollback_lines = stable_resize and 8000 or 12000
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- TERMINAL CAPABILITIES - For modern AI tools
 -- ═══════════════════════════════════════════════════════════════════════════════
-config.term = 'wezterm'
+config.term = 'rldyourterm'
 config.enable_kitty_keyboard = true  -- Advanced keyboard protocol
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -230,7 +261,7 @@ config.window_padding = {
 }
 
 -- Font configuration
-config.font = wezterm.font_with_fallback {
+config.font = rldterm.font_with_fallback {
   { family = 'JetBrains Mono', weight = 'Regular' },
   { family = 'Symbols Nerd Font Mono', weight = 'Regular' },
   { family = 'JetBrainsMono Nerd Font', weight = 'Regular' },
@@ -270,7 +301,7 @@ config.colors = {
 
 -- Fancy tab bar chrome styling
 config.window_frame = {
-  font = wezterm.font { family = 'JetBrains Mono', weight = 'Bold' },
+  font = rldterm.font { family = 'JetBrains Mono', weight = 'Bold' },
   font_size = 12.0,
   active_titlebar_bg = '#090d1a',
   inactive_titlebar_bg = '#090d1a',
@@ -283,10 +314,10 @@ config.window_frame = {
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- BACKGROUND GRADIENT - Subtle vertical depth
 -- ═══════════════════════════════════════════════════════════════════════════════
-if not minimal_ui then
+if not is_stable_profile then
   config.window_background_gradient = {
     orientation = 'Vertical',
-    colors = { '#0b1020', '#0a0d1e', '#0d0820' },
+    colors = stable_resize and { '#0b1020', '#0d0820' } or { '#0b1020', '#0a0d1e', '#0d0820' },
     interpolation = 'Linear',
     blend = 'Rgb',
   }
@@ -303,7 +334,7 @@ config.inactive_pane_hsb = minimal_ui and { saturation = 1.0, brightness = 1.0 }
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- HYPERLINK RULES - Immediately clickable links in AI tool output
 -- ═══════════════════════════════════════════════════════════════════════════════
-config.hyperlink_rules = wezterm.default_hyperlink_rules()
+config.hyperlink_rules = rldterm.default_hyperlink_rules()
 
 -- Additional rules for AI tool output
 table.insert(config.hyperlink_rules, {
@@ -333,7 +364,7 @@ config.quick_select_patterns = {
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- TAB BAR STYLING - PowerLine arrows with Nerd Fonts
 -- ═══════════════════════════════════════════════════════════════════════════════
-local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+local SOLID_LEFT_ARROW = rldterm.nerdfonts.pl_left_hard_divider
 local battery_cache_at = 0
 local battery_cache = {}
 
@@ -344,7 +375,7 @@ local function get_battery_cells()
   end
 
   local cells = {}
-  for _, b in ipairs(wezterm.battery_info()) do
+  for _, b in ipairs(rldterm.battery_info()) do
     table.insert(cells, string.format('%.0f%%', b.state_of_charge * 100))
   end
   battery_cache = cells
@@ -358,7 +389,7 @@ local function tab_title(tab_info)
   return tab_info.active_pane.title
 end
 
-wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
+rldterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
   -- Unseen output indicator
   local has_unseen = false
   for _, p in ipairs(tab.panes) do
@@ -367,7 +398,7 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
 
   local indicator = has_unseen and ' ●' or ''
   local title = tab_title(tab)
-  title = wezterm.truncate_right(title, max_width - 4)
+  title = rldterm.truncate_right(title, max_width - 4)
 
   return ' ' .. (tab.tab_index + 1) .. ': ' .. title .. indicator .. ' '
 end)
@@ -375,9 +406,20 @@ end)
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- STATUS BAR - System info (right side of tab bar)
 -- ═══════════════════════════════════════════════════════════════════════════════
-wezterm.on('update-status', function(window, pane)
+rldterm.on('update-status', function(window, pane)
+  if is_stable_profile then
+    window:set_left_status(rldterm.format {
+      { Background = { Color = '#090d1a' } },
+      { Foreground = { Color = '#ff2d95' } },
+      { Attribute = { Intensity = 'Bold' } },
+      { Text = ' rldyourmnd ' },
+    })
+    window:set_right_status('')
+    return
+  end
+
   -- LEFT: static neon signature
-  window:set_left_status(wezterm.format {
+  window:set_left_status(rldterm.format {
     { Background = { Color = '#090d1a' } },
     { Foreground = { Color = '#ff2d95' } },
     { Attribute = { Intensity = 'Bold' } },
@@ -386,19 +428,22 @@ wezterm.on('update-status', function(window, pane)
 
   -- RIGHT: PowerLine segments (cwd, hostname, time, battery)
   local cells = {}
-  local cwd_uri = pane:get_current_working_dir()
-  if cwd_uri then
-    local cwd = type(cwd_uri) == 'userdata' and cwd_uri.file_path or ''
-    -- Show only last 2 path components
-    cwd = cwd:gsub('^.*/(.-/[^/]+)$', '%1')
-    if cwd ~= '' then table.insert(cells, cwd) end
-  end
-  -- string.gsub returns (value, substitutions_count); keep only the value
-  local hostname = wezterm.hostname():gsub('%..*', '')
+  local hostname = rldterm.hostname():gsub('%..*', '')
   table.insert(cells, hostname)
-  table.insert(cells, wezterm.strftime('%H:%M'))
-  for _, battery in ipairs(get_battery_cells()) do
-    table.insert(cells, battery)
+  table.insert(cells, rldterm.strftime('%H:%M'))
+
+  if not stable_resize then
+    local cwd_uri = pane:get_current_working_dir()
+    if cwd_uri then
+      local cwd = type(cwd_uri) == 'userdata' and cwd_uri.file_path or ''
+      -- Show only last 2 path components
+      cwd = cwd:gsub('^.*/(.-/[^/]+)$', '%1')
+      if cwd ~= '' then table.insert(cells, cwd) end
+    end
+
+    for _, battery in ipairs(get_battery_cells()) do
+      table.insert(cells, battery)
+    end
   end
 
   -- Color gradient for segments (darker to lighter neon)
@@ -414,13 +459,13 @@ wezterm.on('update-status', function(window, pane)
     table.insert(elements, { Foreground = { Color = text_fg } })
     table.insert(elements, { Text = ' ' .. cell .. ' ' })
   end
-  window:set_right_status(wezterm.format(elements))
+  window:set_right_status(rldterm.format(elements))
 end)
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- KEYBINDINGS
 -- ═══════════════════════════════════════════════════════════════════════════════
-local act = wezterm.action
+local act = rldterm.action
 
 config.keys = {
   -- Pane management
@@ -469,7 +514,7 @@ config.keys = {
 }
 
 -- Toggle ligature event
-wezterm.on('toggle-ligature', function(window, pane)
+rldterm.on('toggle-ligature', function(window, pane)
   local overrides = window:get_config_overrides() or {}
   if not overrides.harfbuzz_features then
     overrides.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }

@@ -151,7 +151,11 @@ foreach ($scriptFile in $allPsScripts) {
 
 # Foundation
 Check-Command -Name 'winget' -VersionArgs @('--version')
-Check-Command -Name 'wezterm' -VersionArgs @('--version')
+if (Test-CommandAvailable -Name 'rldyourterm') {
+  Check-Command -Name 'rldyourterm' -VersionArgs @('--version')
+} else {
+  Add-Fail 'rldyourterm command missing'
+}
 Check-Command -Name 'pwsh' -VersionArgs @('--version')
 Check-Command -Name 'starship' -VersionArgs @('--version')
 Check-Command -Name 'git' -VersionArgs @('--version')
@@ -203,7 +207,8 @@ Check-Command -Name 'gemini' -VersionArgs @('--version')
 Check-Command -Name 'codex' -VersionArgs @('--version')
 
 # Config parity and profile checks
-Check-FileParity -LocalPath (Join-Path $HOME '.wezterm.lua') -RepoPath (Join-Path $script:ProjectRoot 'configs\wezterm\wezterm.lua') -Label 'WezTerm config'
+Check-FileParity -LocalPath (Join-Path $HOME '.rldyourterm.lua') -RepoPath (Join-Path $script:ProjectRoot 'configs\rldyourterm\rldyourterm.lua') -Label 'rldyourterm config'
+
 Check-FileParity -LocalPath (Join-Path $HOME '.config\starship.toml') -RepoPath (Join-Path $script:ProjectRoot 'configs\starship\starship.toml') -Label 'Starship config'
 
 Check-ProfileLine -Line 'Invoke-Expression (&starship init powershell)' -Label 'Starship init'

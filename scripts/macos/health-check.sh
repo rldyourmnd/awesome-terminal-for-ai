@@ -126,7 +126,7 @@ else
   log_fail "brew missing"
 fi
 
-check_command wezterm --version
+check_command rldyourterm-stable --version
 check_command fish --version
 check_command starship --version
 
@@ -184,7 +184,7 @@ check_command claude --version
 check_command gemini --version
 check_command codex --version
 
-check_file_parity "$HOME/.wezterm.lua" "$PROJECT_DIR/configs/wezterm/wezterm.lua" "WezTerm config"
+check_file_parity "$HOME/.rldyourterm.lua" "$PROJECT_DIR/configs/rldyourterm/rldyourterm.lua" "rldyourterm config"
 check_file_parity "$HOME/.config/fish/config.fish" "$PROJECT_DIR/configs/fish/config.fish" "Fish config"
 check_file_parity "$HOME/.config/starship.toml" "$PROJECT_DIR/configs/starship/starship.toml" "Starship config"
 

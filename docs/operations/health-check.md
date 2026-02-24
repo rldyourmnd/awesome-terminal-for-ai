@@ -45,7 +45,7 @@ macOS:
 - PowerShell script parse validation (`*.ps1` under `scripts/`)
 - Fish config syntax (`fish -n configs/fish/config.fish`)
 - Mandatory config files and parity checks:
-  - `~/.wezterm.lua` vs `configs/wezterm/wezterm.lua`
+  - `~/.rldyourterm.lua` vs `configs/rldyourterm/rldyourterm.lua`
   - `~/.config/starship.toml` vs `configs/starship/starship.toml`
 - Linux/macOS-only:
   - `~/.config/fish/config.fish` vs `configs/fish/config.fish`
@@ -57,17 +57,38 @@ macOS:
   - `gemini` non-responsive invocation on this machine
   - recent compositor/runtime freeze signatures from user journal (`journalctl --user`)
     - GNOME/Mutter resize-path signals (`size change accounting`, `frame counter`, `MetaShapedTexture`)
-    - WezTerm runtime signals (`update-status` runtime error, mux broken pipe)
+    - rldyourterm runtime signals (`update-status` runtime error, mux broken pipe)
+  - memory pressure + OOM risk indicators:
+    - low `MemAvailable` snapshot from `/proc/meminfo`
+    - high swap saturation percentage
+    - kernel OOM signatures from `journalctl -k -b` (`oom-kill`, `Out of memory: Killed process`)
 - Tool inventory contract drift (terminal+tool catalog updates)
 - Installer script health (`git diff`-stable script files and executable bit)
 
 If runtime freeze warnings appear, test these runtime overrides before escalating:
 
 ```bash
-WEZTERM_FORCE_WAYLAND=1 WEZTERM_MINIMAL_UI=1 wezterm start --always-new-process
-WEZTERM_FORCE_X11=1 wezterm start --always-new-process
-WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_STABLE_RESIZE=1 rldyourterm-stable --mode stable
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_STABLE_RESIZE=1 rldyourterm-stable --mode stable
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_MINIMAL_UI=1 rldyourterm-stable --mode minimal
+RLDYOURTERM_FORCE_WAYLAND=1 rldyourterm-stable --mode wayland
+RLDYOURTERM_SAFE_RENDERER=1 rldyourterm-stable --mode software
 ```
+
+Repo launcher shortcuts:
+
+```bash
+rldyourterm-stable --mode stable
+rldyourterm-stable --mode minimal
+rldyourterm-stable --mode wayland
+rldyourterm-stable --mode software
+```
+
+Launcher command args:
+
+- Safe default (shell only): `rldyourterm-stable --mode stable`
+- To run a command in terminal: `rldyourterm-stable --mode stable -- <command>`
+- Raw positional arguments are ignored by default unless `RLDYOURTERM_STABLE_ALLOW_COMMAND_ARGS=1` is set.
 
 ## Recommended Usage
 

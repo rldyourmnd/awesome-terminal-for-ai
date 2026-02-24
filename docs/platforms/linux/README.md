@@ -6,7 +6,7 @@ This is the production implementation for Linux hosts.
 
 - Distributions: Debian/Ubuntu (APT-based)
 - Shell: Fish
-- Terminal: WezTerm
+- Terminal: rldyourterm
 - Prompt: Starship
 - Layers: Foundation + Layer 1..5
 - Install style: non-interactive (`apt-get` + `DEBIAN_FRONTEND=noninteractive`)
@@ -40,22 +40,39 @@ This is the production implementation for Linux hosts.
 
 `./scripts/install.sh` now auto-detects OS. On Linux it runs the existing Linux pipeline.
 
-## WezTerm Runtime Modes
+## rldyourterm Runtime Modes
 
-Linux WezTerm config is session-aware by default:
+Linux rldyourterm config is stability-first by default:
 
-- Wayland session (`XDG_SESSION_TYPE=wayland`) -> native Wayland.
-- X11 session -> X11/XWayland.
+- Linux baseline -> X11/XWayland (`enable_wayland=false`).
+- Native Wayland is opt-in via override.
 - Renderer default -> `OpenGL` (stable baseline).
 
 Explicit runtime overrides:
 
 ```bash
-WEZTERM_FORCE_WAYLAND=1 wezterm start --always-new-process
-WEZTERM_FORCE_X11=1 wezterm start --always-new-process
-WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process
-WEZTERM_MINIMAL_UI=1 wezterm start --always-new-process
+rldyourterm-stable --mode stable
+rldyourterm-stable --mode wayland
+rldyourterm-stable --mode passthrough
+rldyourterm-stable --mode software
+rldyourterm-stable --mode stable
+rldyourterm-stable --mode minimal
 ```
+
+Preferred wrapper (repo launcher) for quick stable sessions:
+
+```bash
+rldyourterm-stable --mode stable
+rldyourterm-stable --mode minimal
+rldyourterm-stable --mode wayland
+rldyourterm-stable --mode software
+rldyourterm-stable --mode passthrough
+rldyourterm-stable --mode stable -- vim
+```
+
+If you pass an additional argument after `--mode`, it is treated as a command. For safety, launcher uses `--` separator:
+- valid: `rldyourterm-stable --mode stable -- vim`
+- run command directly only when needed: `RLDYOURTERM_STABLE_ALLOW_COMMAND_ARGS=1 rldyourterm-stable somecommand`
 
 ## Operational Guarantees
 

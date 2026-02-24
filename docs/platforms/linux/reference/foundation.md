@@ -8,7 +8,7 @@ The Foundation layer provides the core terminal environment:
 
 | Component | Score | Purpose |
 |-----------|-------|---------|
-| **WezTerm** | 91.1 | GPU-accelerated terminal emulator |
+| **rldyourterm** | 91.1 | GPU-accelerated terminal emulator |
 | **Fish** | 94.5 | Modern shell with autosuggestions |
 | **Starship** | 80.8 | Minimal cross-shell prompt |
 
@@ -24,27 +24,30 @@ Platform-specific production runbooks:
 
 ## Installation
 
-### 1. WezTerm
+### 1. rldyourterm
 
 ```bash
-# Add WezTerm repository
+# Add rldyourterm repository
 tmp_key="$(mktemp)"
-curl --proto '=https' --tlsv1.2 -fsSL https://apt.fury.io/wez/gpg.key -o "$tmp_key"
-sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm.gpg "$tmp_key"
+curl --proto '=https' --tlsv1.2 -fsSL https://apt.fury.io/rldyourterm/gpg.key -o "$tmp_key"
+# Keep the upstream terminal package repository source; keyring filename is
+# namespaced for this forked installer.
+sudo gpg --yes --dearmor -o /usr/share/keyrings/rldyourterm-archive-keyring.gpg "$tmp_key"
 rm -f "$tmp_key"
 
 # Add to apt sources
-echo "deb [signed-by=/usr/share/keyrings/wezterm.gpg] https://apt.fury.io/wez/ * *" | sudo tee /etc/apt/sources.list.d/wezterm.list
+echo "deb [signed-by=/usr/share/keyrings/rldyourterm-archive-keyring.gpg] https://apt.fury.io/rldyourterm/ * *" | sudo tee /etc/apt/sources.list.d/rldyourterm.list
 
 # Install
+# Keep package namespace aligned with this forked repo.
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wezterm
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends rldyourterm
 ```
 
 **Verify:**
 ```bash
-wezterm --version
-# Expected: wezterm 20240203-110809-5046fc22 or newer
+rldyourterm-stable --version
+# Expected: rldyourterm 1.0.0 or newer
 ```
 
 ### 2. Fish Shell
@@ -87,7 +90,7 @@ starship --version
 
 | Component | Config File |
 |-----------|-------------|
-| WezTerm | `~/.wezterm.lua` |
+| rldyourterm | `~/.rldyourterm.lua` |
 | Fish | `~/.config/fish/config.fish` |
 | Starship | `~/.config/starship.toml` |
 
@@ -95,29 +98,30 @@ starship --version
 
 From project directory:
 ```bash
-cp configs/wezterm/wezterm.lua ~/.wezterm.lua
+cp configs/rldyourterm/rldyourterm.lua ~/.rldyourterm.lua
 cp configs/fish/config.fish ~/.config/fish/config.fish
 cp configs/starship/starship.toml ~/.config/starship.toml
 ```
 
 ---
 
-## WezTerm Configuration
+## rldyourterm Configuration
 
 ### Philosophy
 
 **Priority: Stability > Speed > Features**
 
-The config is optimized for long-running AI sessions. If WezTerm GUI crashes, the multiplexer ensures your session survives.
+The config is optimized for long-running AI sessions. If rldyourterm GUI crashes, the multiplexer ensures your session survives.
 
 ### Key Features
 
 - **OpenGL rendering** - Stable GPU acceleration (WebGPU+Vulkan can cause SIGSEGV with NVIDIA 580.x)
-- **Session-aware display protocol** - Wayland session uses native Wayland; X11 session uses X11/XWayland
+- **Stability-first display protocol** - Linux baseline uses X11/XWayland; Wayland is explicit opt-in
 - **Built-in multiplexer** - Session persistence, no tmux needed
 - **local_echo_threshold_ms=10** - Predictive echo for instant feel
 - **Disabled ligatures** - Faster text rendering for AI output streaming
-- **Optional minimal UI mode** - `WEZTERM_MINIMAL_UI=1` for compositor stress scenarios
+- **Stable resize profile** - `RLDYOURTERM_STABLE_RESIZE=1` keeps full UI and reduces resize repaint pressure
+- **Optional minimal UI mode** - `RLDYOURTERM_MINIMAL_UI=1` for compositor stress scenarios
 
 ### Keybindings
 
@@ -158,7 +162,7 @@ config.quick_select_patterns = {
 Clickable links in AI tool output:
 
 ```lua
-config.hyperlink_rules = wezterm.default_hyperlink_rules()
+config.hyperlink_rules = rldterm.default_hyperlink_rules()
 
 -- File paths
 table.insert(config.hyperlink_rules, {
@@ -171,24 +175,24 @@ table.insert(config.hyperlink_rules, {
 
 ```lua
 -- OpenGL is default stable renderer
-config.front_end = 'OpenGL'  -- or WEZTERM_RENDERER=opengl
+config.front_end = 'OpenGL'  -- or RLDYOURTERM_RENDERER=opengl
 
 -- Runtime overrides:
--- WEZTERM_RENDERER=software
--- WEZTERM_RENDERER=webgpu
--- WEZTERM_SAFE_RENDERER=1  -- equivalent software fallback
+-- RLDYOURTERM_RENDERER=software
+-- RLDYOURTERM_RENDERER=webgpu
+-- RLDYOURTERM_SAFE_RENDERER=1  -- equivalent software fallback
 ```
 
 ### Display Protocol Selection
 
 ```lua
--- Linux default (session-aware):
--- XDG_SESSION_TYPE=wayland -> enable_wayland=true
--- XDG_SESSION_TYPE=x11     -> enable_wayland=false
+-- Linux default (stability-first):
+-- enable_wayland=false  -> X11/XWayland baseline
 
 -- Force overrides:
--- WEZTERM_FORCE_WAYLAND=1
--- WEZTERM_FORCE_X11=1
+-- RLDYOURTERM_FORCE_X11=1
+-- RLDYOURTERM_FORCE_WAYLAND=1
+-- RLDYOURTERM_AUTO_WAYLAND=1  -- session-aware auto mode
 ```
 
 ### Multiplexer Configuration
@@ -210,7 +214,8 @@ Default profile keeps fancy tab bar and gradient. Minimal profile disables both:
 
 ```lua
 config.use_fancy_tab_bar = true
--- WEZTERM_MINIMAL_UI=1 -> use_fancy_tab_bar=false, gradient disabled
+-- RLDYOURTERM_STABLE_RESIZE=1 -> lower status repaint cadence, simpler gradient
+-- RLDYOURTERM_MINIMAL_UI=1 -> use_fancy_tab_bar=false, gradient disabled
 config.window_decorations = 'TITLE | RESIZE'  -- Classic title bar
 config.hide_tab_bar_if_only_one_tab = false
 config.show_new_tab_button_in_tab_bar = true
@@ -394,7 +399,7 @@ config.send_composed_key_when_right_alt_is_pressed = false
 
 ### Common Errors and Solutions
 
-#### 1. WezTerm: "CurrentDomain is not a valid Pattern variant"
+#### 1. rldyourterm: "CurrentDomain is not a valid Pattern variant"
 
 **Error:**
 ```
@@ -476,7 +481,7 @@ Or add to correct config file:
 - zsh: `~/.zshrc` → `eval "$(starship init zsh)"`
 - fish: `~/.config/fish/config.fish` → `starship init fish | source`
 
-#### 5. WezTerm: GPG key import fails
+#### 5. rldyourterm: GPG key import fails
 
 **Error:**
 ```
@@ -488,22 +493,22 @@ gpg: missing argument for option "-o"
 **Solution:**
 Use correct path:
 ```bash
-curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm.gpg
+curl -fsSL https://apt.fury.io/rldyourterm/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/rldyourterm-archive-keyring.gpg
 ```
 
 Note: `/usr/share/` not `/usr/shake/`
 
-#### 6. WezTerm: "Permission denied" for apt sources
+#### 6. rldyourterm: "Permission denied" for apt sources
 
 **Error:**
 ```
-tee: /etc/apt/sources.list.d/wezterm.list: Permission denied
+tee: /etc/apt/sources.list.d/rldyourterm.list: Permission denied
 ```
 
 **Solution:**
 Use sudo:
 ```bash
-echo "deb [signed-by=/usr/share/keyrings/wezterm.gpg] https://apt.fury.io/wez/ * *" | sudo tee /etc/apt/sources.list.d/wezterm.list
+echo "deb [signed-by=/usr/share/keyrings/rldyourterm-archive-keyring.gpg] https://apt.fury.io/rldyourterm/ * *" | sudo tee /etc/apt/sources.list.d/rldyourterm.list
 ```
 
 #### 7. Fish: Config not loading
@@ -581,8 +586,8 @@ starship --version
 ### Check All Components
 
 ```bash
-# WezTerm
-wezterm --version
+# rldyourterm
+rldyourterm-stable --version
 
 # Fish
 fish --version
@@ -591,7 +596,7 @@ fish --version
 starship --version
 
 # Config files
-ls -la ~/.wezterm.lua
+ls -la ~/.rldyourterm.lua
 ls -la ~/.config/fish/config.fish
 ls -la ~/.config/starship.toml
 ```
@@ -603,10 +608,10 @@ time fish -c exit
 # Expected: < 0.05s total
 ```
 
-### Test WezTerm Config
+### Test rldyourterm Config
 
 ```bash
-wezterm -e echo "test"
+rldyourterm-stable -e echo "test"
 # Should open terminal without errors
 ```
 
@@ -635,7 +640,7 @@ After Foundation is complete:
 
 ## Related Files
 
-- `configs/wezterm/wezterm.lua` - WezTerm configuration
+- `configs/rldyourterm/rldyourterm.lua` - rldyourterm configuration
 - `configs/fish/config.fish` - Fish shell configuration
 - `configs/starship/starship.toml` - Starship prompt configuration
 - `.serena/memories/FRONTEND_00_terminal.md` - Detailed terminal config memory

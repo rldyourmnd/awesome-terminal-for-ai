@@ -7,7 +7,7 @@ Production-ready macOS implementation using Homebrew and the same layered model.
 - OS: macOS (Darwin)
 - Package manager: Homebrew (formulae + casks)
 - Shell: Fish
-- Terminal: WezTerm
+- Terminal: rldyourterm
 - Prompt: Starship
 - Layers: Foundation + Layer 1..5
 
@@ -39,7 +39,7 @@ Production-ready macOS implementation using Homebrew and the same layered model.
 
 ### Foundation
 
-- cask: `wezterm`
+- cask: `rldyourterm`
 - formulae: `fish`, `starship`
 
 ### Layer 1 (File Operations)
@@ -71,6 +71,6 @@ Production-ready macOS implementation using Homebrew and the same layered model.
 ## Operational Notes
 
 - Fish default shell setup requires adding fish path to `/etc/shells` and running `chsh -s <fish_path>`.
-- WezTerm GUI is installed via Homebrew cask; script applies shared repo config to `~/.wezterm.lua`.
+- rldyourterm GUI is installed via Homebrew cask; script applies shared repo config to `~/.rldyourterm.lua`.
 - Config parity is validated by `scripts/macos/health-check.sh`.
 - `scripts/macos/install-layer-4.sh` installs `probe-code` via `cargo install --locked` for reproducibility.

@@ -28,16 +28,28 @@
 
 ### Terminal freeze on move/resize (multi-monitor)
 
-- Start with session-aware defaults from repo config:
-  - `cp configs/wezterm/wezterm.lua ~/.wezterm.lua`
-- Test low-overhead native Wayland mode:
-  - `WEZTERM_FORCE_WAYLAND=1 WEZTERM_MINIMAL_UI=1 wezterm start --always-new-process`
-- If needed, force X11 path:
-  - `WEZTERM_FORCE_X11=1 wezterm start --always-new-process`
+- Start with repo defaults from config:
+  - `cp configs/rldyourterm/rldyourterm.lua ~/.rldyourterm.lua`
+- For move/resize crashes, test X11 + stable resize profile first:
+  - `rldyourterm-stable --mode stable`
+- If needed, test low-overhead X11 mode:
+  - `rldyourterm-stable --mode minimal`
+- If needed, test native Wayland explicitly:
+  - `rldyourterm-stable --mode wayland`
 - Last-resort renderer fallback:
-  - `WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process`
+  - `rldyourterm-stable --mode software`
 - Inspect last logs:
   - `journalctl --user -b --since '20 minutes ago' | rg -n "size change accounting|frame counter but no frame drawn time|MetaShapedTexture|update-status event: runtime error"`
+
+### Unexpected `Unable to spawn <arg>` in rldyourterm logs
+
+- This usually means a positional value was passed to `rldyourterm-stable --mode <mode>` as a command name.
+- Use wrapper mode for normal sessions:
+  - `rldyourterm-stable --mode stable`
+- Run commands explicitly:
+  - `rldyourterm-stable --mode stable -- <command>`
+- If you intentionally need raw positional arguments, set:
+  - `RLDYOURTERM_STABLE_ALLOW_COMMAND_ARGS=1`
 
 ### Linux `sg` is not `ast-grep`
 

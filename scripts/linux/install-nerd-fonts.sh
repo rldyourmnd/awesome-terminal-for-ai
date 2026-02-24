@@ -50,4 +50,4 @@ fc-cache -f "$FONT_ROOT"
 log "Installed fonts:"
 find "$JETBRAINS_DIR" "$SYMBOLS_DIR" -maxdepth 1 -type f -name "*.ttf" | sort
 
-log "Done. Restart WezTerm to pick up new fonts."
+log "Done. Restart rldyourterm to pick up new fonts."

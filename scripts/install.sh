@@ -161,7 +161,7 @@ echo -e "${GREEN}  ALL 5 LAYERS + FOUNDATION COMPLETE!                        ${
 echo -e "${GREEN}════════════════════════════════════════════════════════════${NC}"
 echo ""
 echo "Layers installed:"
-echo "  Foundation: WezTerm + Fish + Starship"
+echo "  Foundation: rldyourterm + Fish + Starship"
 echo "  Layer 1:    bat, fd, rg, sd, jq, yq, eza"
 echo "  Layer 2:    fzf, zoxide, atuin, uv, bun, watchexec, glow, bottom, hyperfine"
 echo "  Layer 3:    gh CLI, lazygit, delta"

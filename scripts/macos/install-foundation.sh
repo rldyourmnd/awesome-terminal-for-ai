@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# macOS Foundation: WezTerm + Fish + Starship + configs
+# macOS Foundation: rldyourterm + Fish + Starship + configs
 
 set -euo pipefail
 
@@ -14,12 +14,15 @@ persist_brew_shellenv
 echo ""
 echo "════════════════════════════════════════════════════════════"
 echo "  MACOS FOUNDATION"
-echo "  WezTerm + Fish + Starship"
+echo "  rldyourterm + Fish + Starship"
 echo "════════════════════════════════════════════════════════════"
 echo ""
 
 # Toolchain
-install_casks wezterm
+if ! install_casks rldyourterm; then
+  log_warn "rldyourterm cask unavailable"
+  exit 1
+fi
 install_formulae fish starship
 
 # Nerd Font for terminal icons (best-effort)
@@ -40,16 +43,16 @@ fi
 # Ensure local config dirs exist
 mkdir -p "$HOME/.config/fish"
 mkdir -p "$HOME/.config/starship/profiles"
-mkdir -p "$HOME/.config/wezterm"
+mkdir -p "$HOME/.config/rldyourterm"
 mkdir -p "$HOME/.local/bin"
 
 # Apply repository configs
-if [[ -f "$PROJECT_DIR/configs/wezterm/wezterm.lua" ]]; then
-  cp "$PROJECT_DIR/configs/wezterm/wezterm.lua" "$HOME/.wezterm.lua"
-  cp "$PROJECT_DIR/configs/wezterm/wezterm.lua" "$HOME/.config/wezterm/wezterm.lua"
-  log_success "WezTerm config applied"
+if [[ -f "$PROJECT_DIR/configs/rldyourterm/rldyourterm.lua" ]]; then
+  cp "$PROJECT_DIR/configs/rldyourterm/rldyourterm.lua" "$HOME/.rldyourterm.lua"
+  cp "$PROJECT_DIR/configs/rldyourterm/rldyourterm.lua" "$HOME/.config/rldyourterm/rldyourterm.lua"
+  log_success "rldyourterm config applied"
 else
-  log_warn "Missing repo WezTerm config: $PROJECT_DIR/configs/wezterm/wezterm.lua"
+  log_warn "Missing repo rldyourterm config: $PROJECT_DIR/configs/rldyourterm/rldyourterm.lua"
 fi
 
 if [[ -f "$PROJECT_DIR/configs/fish/config.fish" ]]; then
@@ -100,10 +103,11 @@ fi
 # PATH helpers
 ensure_local_bin_path_for_zsh
 
-# WezTerm CLI path helper (for systems where cask app binary is not on PATH)
-if ! command_exists wezterm && [[ -x /Applications/WezTerm.app/Contents/MacOS/wezterm ]]; then
-  ln -sf /Applications/WezTerm.app/Contents/MacOS/wezterm "$HOME/.local/bin/wezterm"
-  log_success "Linked WezTerm binary into ~/.local/bin"
+# rldyourterm CLI path helper (for systems where cask app binary is not on PATH)
+term_app_dir="/Applications/rldyourterm.app"
+if ! command_exists rldyourterm && [[ -x "$term_app_dir/Contents/MacOS/rldyourterm" ]]; then
+  ln -sf "$term_app_dir/Contents/MacOS/rldyourterm" "$HOME/.local/bin/rldyourterm"
+  log_success "Linked rldyourterm binary into ~/.local/bin"
 fi
 
 echo ""
@@ -112,12 +116,13 @@ echo "  VERIFICATION"
 echo "════════════════════════════════════════════════════════════"
 echo ""
 
-print_tool_version wezterm wezterm --version
+print_tool_version rldyourterm-stable rldyourterm-stable --version
 print_tool_version fish fish --version
 print_tool_version starship starship --version
 
 echo ""
-[[ -f "$HOME/.wezterm.lua" ]] && echo "✅ ~/.wezterm.lua" || echo "❌ ~/.wezterm.lua"
+[[ -f "$HOME/.rldyourterm.lua" ]] && echo "✅ ~/.rldyourterm.lua" || echo "❌ ~/.rldyourterm.lua"
+[[ -f "$HOME/.config/rldyourterm/rldyourterm.lua" ]] && echo "✅ ~/.config/rldyourterm/rldyourterm.lua" || echo "❌ ~/.config/rldyourterm/rldyourterm.lua"
 [[ -f "$HOME/.config/fish/config.fish" ]] && echo "✅ ~/.config/fish/config.fish" || echo "❌ ~/.config/fish/config.fish"
 [[ -f "$HOME/.config/starship.toml" ]] && echo "✅ ~/.config/starship.toml" || echo "❌ ~/.config/starship.toml"
 

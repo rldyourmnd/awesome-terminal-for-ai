@@ -43,7 +43,7 @@ Local dotfiles diverge from repository templates.
 **Fix**
 
 ```bash
-cp configs/wezterm/wezterm.lua ~/.wezterm.lua
+cp configs/rldyourterm/rldyourterm.lua ~/.rldyourterm.lua
 cp configs/fish/config.fish ~/.config/fish/config.fish
 mkdir -p ~/.config
 cp configs/starship/starship.toml ~/.config/starship.toml
@@ -51,7 +51,7 @@ cp configs/starship/starship.toml ~/.config/starship.toml
 
 Then re-open shell and rerun health-check.
 
-### 3) WezTerm spam logs: `while processing update-status event: runtime error`
+### 3) rldyourterm spam logs: `while processing update-status event: runtime error`
 
 **Cause**
 
@@ -63,10 +63,10 @@ multi-return values like `string.gsub(...)` directly into `table.insert(...)`).
 Sync local config from the repository:
 
 ```bash
-cp configs/wezterm/wezterm.lua ~/.wezterm.lua
+cp configs/rldyourterm/rldyourterm.lua ~/.rldyourterm.lua
 ```
 
-Reload WezTerm config (`Ctrl+Shift+R` by default) and validate:
+Reload rldyourterm config (`Ctrl+Shift+R` by default) and validate:
 
 ```bash
 journalctl --user -b --since '10 minutes ago' | rg "update-status event: runtime error"
@@ -84,28 +84,38 @@ especially during aggressive resize operations in multi-monitor setups.
 1) Ensure the repository config is active:
 
 ```bash
-cp configs/wezterm/wezterm.lua ~/.wezterm.lua
+cp configs/rldyourterm/rldyourterm.lua ~/.rldyourterm.lua
 ```
 
-2) Test native Wayland + low-overhead UI profile:
+2) For move/resize crash scenarios, force X11 baseline first:
 
 ```bash
-WEZTERM_FORCE_WAYLAND=1 WEZTERM_MINIMAL_UI=1 wezterm start --always-new-process
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_STABLE_RESIZE=1 rldyourterm-stable --mode stable
+rldyourterm-stable --mode stable
 ```
 
-3) If the issue persists, force X11 path:
+3) If needed, test low-overhead UI profile on X11:
 
 ```bash
-WEZTERM_FORCE_X11=1 wezterm start --always-new-process
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_MINIMAL_UI=1 rldyourterm-stable --mode minimal
+rldyourterm-stable --mode minimal
 ```
 
-4) If rendering still stalls, force software renderer:
+4) If you must run native Wayland, test explicitly:
 
 ```bash
-WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process
+RLDYOURTERM_FORCE_WAYLAND=1 rldyourterm-stable --mode wayland
+rldyourterm-stable --mode wayland
 ```
 
-5) Validate logs around the incident:
+5) If rendering still stalls on either backend, force software renderer:
+
+```bash
+RLDYOURTERM_SAFE_RENDERER=1 rldyourterm-stable --mode software
+rldyourterm-stable --mode software
+```
+
+6) Validate logs around the incident:
 
 ```bash
 journalctl --user -b --since '20 minutes ago' | rg -n "size change accounting|frame counter but no frame drawn time|MetaShapedTexture|needs an allocation|update-status event: runtime error"

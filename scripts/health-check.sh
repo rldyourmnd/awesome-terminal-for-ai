@@ -208,6 +208,38 @@ check_executable() {
     fi
 }
 
+check_rldyourterm_entrypoints() {
+    local local_desktop="$HOME/.local/share/applications/org.rldyourterm.desktop"
+    local primary_wrapper="$HOME/.local/bin/rldyourterm"
+    local stable_launcher="$HOME/.local/bin/rldyourterm-stable"
+    local resolved_wrapper
+
+    if [[ -x "$primary_wrapper" ]]; then
+        resolved_wrapper="$(readlink -f "$primary_wrapper" 2>/dev/null || true)"
+        if [[ "$resolved_wrapper" == "$stable_launcher" ]]; then
+            log_ok "rldyourterm command routes through rldyourterm-stable"
+        else
+            log_warn "rldyourterm command is not routed to rldyourterm-stable"
+        fi
+    else
+        log_warn "rldyourterm command missing or not executable in ~/.local/bin"
+    fi
+
+    if [[ -f "$local_desktop" ]]; then
+        if command_exists rg; then
+            if rg -q '^Exec=rldyourterm-stable(\s|$)' "$local_desktop"; then
+                log_ok "rldyourterm desktop entry executes rldyourterm-stable: $local_desktop"
+            else
+                log_warn "rldyourterm desktop entry does not execute rldyourterm-stable"
+            fi
+        else
+            log_warn "rg unavailable; cannot validate rldyourterm desktop entry execution command"
+        fi
+    else
+        log_warn "User rldyourterm desktop entry not found: $local_desktop"
+    fi
+}
+
 check_config_parity() {
     local local_file="$1"
     local repo_file="$2"
@@ -397,30 +429,119 @@ check_terminal_runtime_logs() {
     fi
 
     local gnome_patterns='Error in size change accounting|Frame has assigned frame counter but no frame drawn time|MetaShapedTexture|needs an allocation'
-    local wezterm_patterns='while processing update-status event: runtime error|wezterm_mux_server_impl::local > writing pdu data buffer: Broken pipe'
-    local gnome_hits wezterm_hits
+    local terminal_patterns='while processing update-status event: runtime error|.+_mux_server_impl::local > writing pdu data buffer: Broken pipe'
+    local terminal_spawn_patterns='Unable to spawn |No viable candidates found in PATH|No such file or directory:|failed to spawn'
+    local terminal_wayland_protocol_patterns='wl_surface#[0-9]+: error [0-9]+: Buffer size .*buffer_scale|error during event_q\\.dispatch protocol_error=.*wl_surface'
+    local gnome_hits terminal_hits terminal_spawn_hits terminal_wayland_protocol_hits
 
     gnome_hits=$(rg -n "$gnome_patterns" <<<"$user_logs" | tail -n 12 || true)
-    wezterm_hits=$(rg -n "$wezterm_patterns" <<<"$user_logs" | tail -n 12 || true)
+    terminal_hits=$(rg -n "$terminal_patterns" <<<"$user_logs" | tail -n 12 || true)
+    terminal_spawn_hits=$(rg -n "$terminal_spawn_patterns" <<<"$user_logs" | tail -n 12 || true)
+    terminal_wayland_protocol_hits=$(rg -n "$terminal_wayland_protocol_patterns" <<<"$user_logs" | tail -n 12 || true)
 
     if [[ -n "$gnome_hits" ]]; then
         log_warn "GNOME compositor freeze signatures detected in recent user journal"
         if [[ "$VERBOSE" == true ]]; then
             echo "$gnome_hits" | sed 's/^/      /'
-            echo "      Suggestion: WEZTERM_MINIMAL_UI=1 WEZTERM_FORCE_WAYLAND=1 wezterm start --always-new-process"
+            echo "      Suggestion: rldyourterm-stable --mode stable"
+            echo "      Escalation: rldyourterm-stable --mode minimal"
         fi
     else
         log_ok "No GNOME compositor freeze signatures in recent user journal"
     fi
 
-    if [[ -n "$wezterm_hits" ]]; then
-        log_warn "WezTerm runtime warning signatures detected in recent user journal"
+    if [[ -n "$terminal_wayland_protocol_hits" ]]; then
+        log_warn "rldyourterm Wayland protocol scale mismatch detected (window can terminate on move/resize)"
         if [[ "$VERBOSE" == true ]]; then
-            echo "$wezterm_hits" | sed 's/^/      /'
-            echo "      Suggestion: WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process"
+            echo "$terminal_wayland_protocol_hits" | sed 's/^/      /'
+            echo "      Suggestion: rldyourterm-stable --mode stable"
+            echo "      Optional: RLDYOURTERM_FORCE_WAYLAND=1 only on builds where Wayland scale/move fixes are confirmed"
         fi
     else
-        log_ok "No WezTerm runtime warning signatures in recent user journal"
+        log_ok "No rldyourterm Wayland protocol scale-mismatch signatures in recent user journal"
+    fi
+
+    if [[ -n "$terminal_hits" ]]; then
+        log_warn "rldyourterm runtime warning signatures detected in recent user journal"
+        if [[ "$VERBOSE" == true ]]; then
+            echo "$terminal_hits" | sed 's/^/      /'
+            echo "      Suggestion: rldyourterm-stable --mode software"
+        fi
+    else
+        log_ok "No rldyourterm runtime warning signatures in recent user journal"
+    fi
+
+    if [[ -n "$terminal_spawn_hits" ]]; then
+        log_warn "rldyourterm spawn failures detected in recent user journal"
+        if [[ "$VERBOSE" == true ]]; then
+            echo "$terminal_spawn_hits" | sed 's/^/      /'
+            echo "      Use: RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_STABLE_RESIZE=1 rldyourterm-stable --mode stable"
+            echo "      For explicit command runs: rldyourterm-stable --mode stable -- <command>"
+            echo "      If intentional: RLDYOURTERM_STABLE_ALLOW_COMMAND_ARGS=1 rldyourterm-stable --mode stable '<command>'"
+        fi
+    else
+        log_ok "No rldyourterm spawn failures detected in recent user journal"
+    fi
+}
+
+check_system_memory_pressure() {
+    if [[ ! -r /proc/meminfo ]]; then
+        log_warn "Cannot read /proc/meminfo; skipping memory pressure diagnostics"
+        return
+    fi
+
+    local mem_available_kb swap_total_kb swap_free_kb swap_used_kb
+    mem_available_kb=$(awk '/MemAvailable:/ {print $2}' /proc/meminfo)
+    swap_total_kb=$(awk '/SwapTotal:/ {print $2}' /proc/meminfo)
+    swap_free_kb=$(awk '/SwapFree:/ {print $2}' /proc/meminfo)
+
+    if [[ -z "$mem_available_kb" || -z "$swap_total_kb" || -z "$swap_free_kb" ]]; then
+        log_warn "Unable to parse memory metrics from /proc/meminfo"
+        return
+    fi
+
+    local mem_available_mb swap_used_mb swap_pct
+    mem_available_mb=$((mem_available_kb / 1024))
+    swap_used_kb=$((swap_total_kb - swap_free_kb))
+    swap_used_mb=$((swap_used_kb / 1024))
+    if [[ "$swap_total_kb" -gt 0 ]]; then
+        swap_pct=$((swap_used_kb * 100 / swap_total_kb))
+    else
+        swap_pct=0
+    fi
+
+    if [[ "$mem_available_mb" -lt 2048 ]]; then
+        log_warn "Low available memory: ${mem_available_mb}MiB (UI stalls likely under resize/move bursts)"
+    else
+        log_ok "Available memory: ${mem_available_mb}MiB"
+    fi
+
+    if [[ "$swap_total_kb" -eq 0 ]]; then
+        log_ok "Swap is disabled (no swap pressure)"
+    elif [[ "$swap_pct" -ge 85 ]]; then
+        log_warn "High swap pressure: ${swap_used_mb}MiB used (${swap_pct}%)"
+        if [[ "$VERBOSE" == true ]]; then
+            echo "      Suggestion: reduce heavy browser/IDE load before terminal stress tests"
+        fi
+    else
+        log_ok "Swap usage: ${swap_used_mb}MiB (${swap_pct}%)"
+    fi
+
+    if ! command_exists journalctl || ! command_exists rg; then
+        log_warn "journalctl/rg not found; skipping kernel OOM diagnostics"
+        return
+    fi
+
+    local oom_hits
+    oom_hits=$(journalctl -k -b --no-pager 2>/dev/null | rg -n 'oom-kill|Out of memory: Killed process' | tail -n 8 || true)
+    if [[ -n "$oom_hits" ]]; then
+        log_warn "Kernel OOM events detected in current boot"
+        if [[ "$VERBOSE" == true ]]; then
+            echo "$oom_hits" | sed 's/^/      /'
+            echo "      Suggestion: keep terminal on X11 stable profile and reduce peak memory pressure"
+        fi
+    else
+        log_ok "No kernel OOM events detected in current boot"
     fi
 }
 
@@ -465,6 +586,7 @@ for script in \
     "$PROJECT_DIR/scripts/install.sh" \
     "$PROJECT_DIR/scripts/publish-wiki.sh" \
     "$PROJECT_DIR/scripts/linux/install-foundation.sh" \
+    "$PROJECT_DIR/scripts/linux/rldyourterm-stable-launcher.sh" \
     "$PROJECT_DIR/scripts/linux/install-layer-1.sh" \
     "$PROJECT_DIR/scripts/linux/install-layer-2.sh" \
     "$PROJECT_DIR/scripts/linux/install-layer-3.sh" \
@@ -476,14 +598,23 @@ for script in \
     check_executable "$script" "$script"
 done
 
-check_config_parity "$HOME/.wezterm.lua" "$PROJECT_DIR/configs/wezterm/wezterm.lua" "WezTerm"
+check_config_parity "$HOME/.rldyourterm.lua" "$PROJECT_DIR/configs/rldyourterm/rldyourterm.lua" "rldyourterm"
+if [[ ! -f "$HOME/.rldyourterm.lua" ]]; then
+    if [[ "$STRICT_MODE" == true ]]; then
+        log_fail ".rldyourterm.lua missing"
+    else
+        log_warn ".rldyourterm.lua missing"
+    fi
+else
+    log_ok "rldyourterm config present: $HOME/.rldyourterm.lua"
+fi
 check_config_parity "$HOME/.config/fish/config.fish" "$PROJECT_DIR/configs/fish/config.fish" "Fish"
 check_config_parity "$HOME/.config/starship.toml" "$PROJECT_DIR/configs/starship/starship.toml" "Starship"
 
 check_local_path_health
 
 log_info "Checking installed toolchain..."
-check_version_or_status "wezterm" "open command output" wezterm --version
+check_version_or_status "rldyourterm-stable" "open command output" rldyourterm-stable --version
 check_version_or_status "fish" "expected 'fish, version X.Y.Z'" fish --version
 check_version_or_status "starship" "expected 'starship X.Y.Z'" starship --version
 check_first_available_version "bat" "batcat" "expected installed semantic" --version
@@ -518,8 +649,12 @@ check_version_or_status "codex" "expected codex cli version" codex --version
 check_semgrep_runtime
 check_gemini_runtime
 check_terminal_runtime_logs
+check_system_memory_pressure
 
 check_dir_presence "$HOME/.local/bin" ".local/bin directory"
+check_file_presence "$HOME/.local/bin/rldyourterm-stable" "rldyourterm-stable launcher"
+check_executable "$HOME/.local/bin/rldyourterm-stable" "rldyourterm-stable launcher executable"
+check_rldyourterm_entrypoints
 
 print_summary
 

@@ -27,9 +27,9 @@ This wiki is the operational playbook for `awesome-terminal-for-ai`.
   - `./scripts/install.sh --help` in shell dispatch flow,
   - `-Help` for `install-windows.ps1` and `health-check-windows.ps1`.
 - CI now includes Linux, macOS, and Windows smoke/parsing coverage.
-- WezTerm runtime profile is now session-aware (Wayland vs X11) with explicit
-  overrides (`WEZTERM_FORCE_WAYLAND`, `WEZTERM_FORCE_X11`, `WEZTERM_SAFE_RENDERER`,
-  `WEZTERM_MINIMAL_UI`).
+- rldyourterm runtime profile is stability-first on Linux (X11 baseline) with explicit
+  overrides (`RLDYOURTERM_FORCE_WAYLAND`, `RLDYOURTERM_FORCE_X11`, `RLDYOURTERM_AUTO_WAYLAND`,
+  `RLDYOURTERM_SAFE_RENDERER`, `RLDYOURTERM_STABLE_RESIZE`, `RLDYOURTERM_MINIMAL_UI`).
 
 ## Canonical Sources
 

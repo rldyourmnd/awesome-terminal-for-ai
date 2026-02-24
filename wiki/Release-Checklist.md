@@ -13,9 +13,11 @@
   - `./scripts/install.sh --dry-run`
   - `./scripts/health-check.sh --strict --summary`
   - validate renderer/display fallbacks for terminal stability:
-    - `WEZTERM_FORCE_WAYLAND=1 WEZTERM_MINIMAL_UI=1 wezterm start --always-new-process`
-    - `WEZTERM_FORCE_X11=1 wezterm start --always-new-process`
-    - `WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process`
+    - `rldyourterm-stable --mode stable`
+    - `rldyourterm-stable --mode stable`
+    - `rldyourterm-stable --mode minimal`
+    - `rldyourterm-stable --mode wayland`
+    - `rldyourterm-stable --mode software`
 - macOS:
   - `./scripts/macos/install.sh --dry-run`
   - `./scripts/health-check-macos.sh --strict`

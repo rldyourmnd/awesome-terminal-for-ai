@@ -8,7 +8,7 @@ This playbook supports deterministic upgrades without breaking existing terminal
 
 ```bash
 git status --short
-cp -a ~/.wezterm.lua ~/.wezterm.lua.pre-upgrade.bak
+cp -a ~/.rldyourterm.lua ~/.rldyourterm.lua.pre-upgrade.bak
 cp -a ~/.config/fish/config.fish ~/.config/fish/config.fish.pre-upgrade.bak
 cp -a ~/.config/starship.toml ~/.config/starship.toml.pre-upgrade.bak
 ```
@@ -59,9 +59,17 @@ journalctl --user -b --since '20 minutes ago' | rg -n "size change accounting|fr
 Optional renderer/display validation matrix:
 
 ```bash
-WEZTERM_FORCE_WAYLAND=1 WEZTERM_MINIMAL_UI=1 wezterm start --always-new-process
-WEZTERM_FORCE_X11=1 wezterm start --always-new-process
-WEZTERM_SAFE_RENDERER=1 wezterm start --always-new-process
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_STABLE_RESIZE=1 rldyourterm-stable --mode stable
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_STABLE_RESIZE=1 rldyourterm-stable --mode stable
+RLDYOURTERM_FORCE_X11=1 RLDYOURTERM_MINIMAL_UI=1 rldyourterm-stable --mode minimal
+RLDYOURTERM_FORCE_WAYLAND=1 rldyourterm-stable --mode wayland
+RLDYOURTERM_SAFE_RENDERER=1 rldyourterm-stable --mode software
+
+# With installed launcher:
+rldyourterm-stable --mode stable
+rldyourterm-stable --mode minimal
+rldyourterm-stable --mode wayland
+rldyourterm-stable --mode software
 ```
 
 ## Rollback Procedure
@@ -79,7 +87,7 @@ git checkout <known-good-commit>
 2. Restore previous configs from backup copies.
 
 ```bash
-mv ~/.wezterm.lua.pre-upgrade.bak ~/.wezterm.lua
+mv ~/.rldyourterm.lua.pre-upgrade.bak ~/.rldyourterm.lua
 mv ~/.config/fish/config.fish.pre-upgrade.bak ~/.config/fish/config.fish
 mv ~/.config/starship.toml.pre-upgrade.bak ~/.config/starship.toml
 ```

@@ -22,7 +22,7 @@ A clear and concise description of what actually happened.
 ## Environment
 - OS: [e.g., Ubuntu 22.04]
 - Shell: [e.g., Fish 4.0.6]
-- Terminal: [e.g., WezTerm]
+- Terminal: [e.g., rldyourterm]
 
 ## Installation Layer
 - [ ] Foundation

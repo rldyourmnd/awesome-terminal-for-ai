@@ -6,13 +6,13 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Assert-Windows
 
-Write-Section 'WINDOWS FOUNDATION: WezTerm + PowerShell + Starship + Git'
+Write-Section 'WINDOWS FOUNDATION: rldyourterm + PowerShell + Starship + Git'
 
 Assert-WingetAvailable
 Ensure-ExecutionPolicyRemoteSigned
 Ensure-LocalBinInPath
 
-Install-WingetPackage -DisplayName 'WezTerm' -CommandName 'wezterm' -PackageIds @('wez.wezterm')
+Install-WingetPackage -DisplayName 'rldyourterm' -CommandName 'rldyourterm' -PackageIds @('rldyourterm.rldyourterm')
 Install-WingetPackage -DisplayName 'PowerShell 7' -CommandName 'pwsh' -PackageIds @('Microsoft.PowerShell')
 Install-WingetPackage -DisplayName 'Starship' -CommandName 'starship' -PackageIds @('Starship.Starship')
 Install-WingetPackage -DisplayName 'Git' -CommandName 'git' -PackageIds @('Git.Git')
@@ -20,22 +20,22 @@ Install-WingetPackage -DisplayName 'Git' -CommandName 'git' -PackageIds @('Git.G
 # Optional Nerd Font for better glyph support in terminal and prompt.
 Install-WingetPackageById -PackageId 'DEVCOM.JetBrainsMonoNerdFont' -Required $false
 
-$weztermRepoConfig = Join-Path $script:ProjectRoot 'configs\wezterm\wezterm.lua'
+$rldyourtermRepoConfig = Join-Path $script:ProjectRoot 'configs\rldyourterm\rldyourterm.lua'
 $starshipRepoConfig = Join-Path $script:ProjectRoot 'configs\starship\starship.toml'
 $starshipProfilesRepo = Join-Path $script:ProjectRoot 'configs\starship\profiles'
 
-$weztermUserConfig = Join-Path $HOME '.wezterm.lua'
-$weztermConfigDir = Join-Path $HOME '.config\wezterm'
+$rldyourtermUserConfig = Join-Path $HOME '.rldyourterm.lua'
+$rldyourtermConfigDir = Join-Path $HOME '.config\rldyourterm'
 $starshipConfigDir = Join-Path $HOME '.config\starship'
 $starshipProfilesDir = Join-Path $starshipConfigDir 'profiles'
 $starshipUserConfig = Join-Path $HOME '.config\starship.toml'
 
-New-DirectoryIfMissing -Path $weztermConfigDir
+New-DirectoryIfMissing -Path $rldyourtermConfigDir
 New-DirectoryIfMissing -Path $starshipConfigDir
 New-DirectoryIfMissing -Path $starshipProfilesDir
 
-Copy-FileWithBackup -Source $weztermRepoConfig -Destination $weztermUserConfig
-Copy-FileWithBackup -Source $weztermRepoConfig -Destination (Join-Path $weztermConfigDir 'wezterm.lua')
+Copy-FileWithBackup -Source $rldyourtermRepoConfig -Destination $rldyourtermUserConfig
+Copy-FileWithBackup -Source $rldyourtermRepoConfig -Destination (Join-Path $rldyourtermConfigDir 'rldyourterm.lua')
 Copy-FileWithBackup -Source $starshipRepoConfig -Destination $starshipUserConfig
 
 Get-ChildItem -Path $starshipProfilesRepo -Filter '*.toml' | ForEach-Object {
@@ -62,8 +62,10 @@ if (Test-WSLAvailable) {
 
 Write-Section 'VERIFICATION'
 
+$terminalCommand = 'rldyourterm'
+
 $checks = @(
-    @{ Name = 'wezterm'; Args = @('--version') },
+    @{ Name = $terminalCommand; Args = @('--version') },
     @{ Name = 'pwsh'; Args = @('--version') },
     @{ Name = 'starship'; Args = @('--version') },
     @{ Name = 'git'; Args = @('--version') }

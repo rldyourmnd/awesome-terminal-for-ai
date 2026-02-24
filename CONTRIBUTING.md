@@ -124,7 +124,7 @@ type(scope): description
 **Examples:**
 ```
 feat(layer-2): add hyperfine benchmarking tool
-fix(foundation): correct WezTerm config path
+fix(foundation): correct rldyourterm config path
 docs(readme): update installation instructions
 ```
 

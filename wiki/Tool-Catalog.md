@@ -4,7 +4,7 @@ This page is an operator index. Canonical matrix lives in docs.
 
 ## Foundation
 
-- WezTerm
+- rldyourterm
 - Fish / PowerShell
 - Starship
 

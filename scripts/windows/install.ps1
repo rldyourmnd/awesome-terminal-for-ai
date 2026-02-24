@@ -53,4 +53,4 @@ Write-Host 'Next steps:' -ForegroundColor Green
 Write-Host '1. Open a new terminal session (or run: RefreshEnv in terminal that supports it).' -ForegroundColor Green
 Write-Host '2. Run health-check: .\scripts\health-check-windows.ps1 -Summary' -ForegroundColor Green
 Write-Host '3. Authenticate gh, claude, gemini, codex as needed.' -ForegroundColor Green
-Write-Host '4. Optional fish experience: install fish inside WSL and set WezTerm launcher profile to WSL.' -ForegroundColor Green
+Write-Host '4. Optional fish experience: install fish inside WSL and set rldyourterm launcher profile to WSL.' -ForegroundColor Green

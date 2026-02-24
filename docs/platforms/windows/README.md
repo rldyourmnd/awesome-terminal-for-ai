@@ -8,7 +8,7 @@ install scripts and health-check parity.
 - OS: Windows 10/11
 - Package manager: WinGet (primary)
 - Shell baseline: PowerShell (`pwsh`)
-- Terminal: WezTerm
+- Terminal: rldyourterm
 - Prompt: Starship
 - Layers: Foundation + Layer 1..5
 
@@ -54,10 +54,10 @@ into PowerShell scripts.
 
 ### Foundation
 
-- WinGet: `wez.wezterm`, `Microsoft.PowerShell`, `Starship.Starship`, `Git.Git`
+- WinGet: `rldyourterm` (mapped to command `rldyourterm` in this fork), `Microsoft.PowerShell`, `Starship.Starship`, `Git.Git`
 - Optional font: `DEVCOM.JetBrainsMonoNerdFont`
 - Config sync:
-  - `configs/wezterm/wezterm.lua` -> `~/.wezterm.lua`
+  - `configs/rldyourterm/rldyourterm.lua` -> `~/.rldyourterm.lua`
   - `configs/starship/starship.toml` -> `~/.config/starship.toml`
 - Profile bootstrapping:
   - `Invoke-Expression (&starship init powershell)`
@@ -129,7 +129,7 @@ Native Windows flow uses PowerShell + Starship. Fish integration is recommended
 via WSL distribution (install fish inside WSL), because Fish support on Windows
 is primarily through compatibility environments (WSL/MSYS2/Cygwin).
 
-Shared WezTerm config is platform-gated with `wezterm.target_triple`:
+Shared rldyourterm config is platform-gated with `rldterm.target_triple` (API module variable in this fork):
 
 - Windows defaults to `pwsh`/`powershell.exe`
 - macOS/Linux defaults to Fish when available
@@ -150,7 +150,7 @@ Health check validates:
 
 - PowerShell script parse integrity (`*.ps1`)
 - Tool presence/version across all layers
-- WezTerm and Starship config parity
+- rldyourterm and Starship config parity
 - PowerShell profile init lines for Starship/zoxide
 - PATH requirements (`~/.local/bin`)
 
@@ -159,7 +159,7 @@ Health check validates:
 - WinGet CLI docs and non-interactive flags
 - WinGet manifests in `microsoft/winget-pkgs`
 - PowerShell profile and execution policy docs
-- WezTerm Windows target-triple/default-program docs
+- rldyourterm Windows target-triple/default-program docs
 - Starship PowerShell init docs
 - uv Windows installer docs
 - Bun Windows installer docs

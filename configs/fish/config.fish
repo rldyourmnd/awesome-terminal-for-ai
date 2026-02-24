@@ -154,6 +154,11 @@ __set_abbr spu 'starship-profile ultra-max'
 __set_abbr cl 'claude --dangerously-skip-permissions'
 __set_abbr gem 'gemini --yolo'
 __set_abbr cx 'codex --full-auto'
+__set_abbr wzs 'rldyourterm-stable'
+__set_abbr wzt 'rldyourterm-stable --mode stable'
+__set_abbr wzm 'rldyourterm-stable --mode minimal'
+__set_abbr wzw 'rldyourterm-stable --mode wayland'
+__set_abbr wzr 'rldyourterm-stable --mode software'
 
 functions --erase __set_abbr
 
@@ -188,4 +193,40 @@ end
 
 function gg
     rg -i $argv
+end
+
+function rldyourterm
+    if test (count $argv) -eq 0
+        command rldyourterm-stable --mode stable
+        return
+    end
+
+    if test "$argv[1]" = "--"
+        command rldyourterm-stable --mode stable -- $argv[2..-1]
+        return
+    end
+
+    if test "$argv[1]" = "--command"
+        if test (count $argv) -gt 1
+            command rldyourterm-stable --mode stable --command $argv[2..-1]
+        else
+            printf 'rldyourterm: --command requires a command to run\n' >&2
+            return 2
+        end
+        return
+    end
+
+    if test "$argv[1]" = "start"
+        command rldyourterm-stable --mode stable start $argv[2..-1]
+        return
+    end
+
+    if string match -q -r '^-' -- $argv[1]
+        command rldyourterm-stable --mode stable $argv
+        return
+    end
+
+    printf 'rldyourterm: positional arguments require -- or --command\n' >&2
+    printf 'Example: rldyourterm -- -- vim\n' >&2
+    return 2
 end
