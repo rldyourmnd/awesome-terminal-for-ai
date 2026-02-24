@@ -1,4 +1,4 @@
 [submodule "rldyourterm"]
 	path = rldyourterm
 	url = https://github.com/rldyourmnd/rldyourterm.git
-	branch = main
+	branch = source
