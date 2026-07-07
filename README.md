@@ -1,3 +1,8 @@
+> ⚠️ **ABANDONED** (2026-07-07). This repository is frozen history. The owner's
+> terminal layer (toolkit verdicts, Brewfile, zsh configs with the agent gate)
+> now lives in the workstation module
+> [`NDDev-it-com/rldyour-new-mac-or-ubuntu`](https://github.com/NDDev-it-com/rldyour-new-mac-or-ubuntu).
+
 # awesome-terminal-for-ai
 
 ![banner](docs/assets/banner.svg)
