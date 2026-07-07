@@ -9,6 +9,7 @@
     "planning/**",
     "metrics/**",
     "rldyourterm/**",
+    ".serena/**",
     "CHANGELOG.md",
     "node_modules/**"
   ]
