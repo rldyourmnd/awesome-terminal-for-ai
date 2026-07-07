@@ -1,79 +1,52 @@
-# AGENTS.md - Project Policy for rldyourterm (Codex Runtime)
+# awesome-terminal-for-ai — agent rules
 
-## Scope
-- Applies to repository: `/home/rldyourmnd/Desktop/projects/nddev_projects/awesome-terminal-for-ai`.
-- Governs architecture, quality, and execution discipline for all sessions.
+This repository is the owner's **zsh-first terminal toolkit specification** for
+AI-agent workflows: evidence-based tool verdicts (`TOOLKIT.md`), the curated
+install set (`Brewfile`), and reference shell configs (`configs/`). It contains
+**no installers** — installation is owned by the estate workstation module
+[`NDDev-it-com/rldyour-new-mac-or-ubuntu`](https://github.com/NDDev-it-com/rldyour-new-mac-or-ubuntu),
+and harness configuration by
+[`NDDev-it-com/rldyour-ai-cli-tools`](https://github.com/NDDev-it-com/rldyour-ai-cli-tools).
 
-## 1) Product Priorities (hard priority order)
-1. `СТАБИЛЬНОСТЬ`
-   - Сохранение сессий при сбоях рендеринга.
-   - Корректный failover: GPU -> CPU без завершения процесса терминала.
-   - Детект, retry/backoff и наблюдаемость для всех критических границ.
-2. `BEST PRACTICES FOR AI TOOLS`
-   - Поведение, заточенное под CLI-потоки CodeX, OpenCode, Claude Code, Gemini CLI.
-   - Предсказуемая производительность ввода/вывода в автоматических сессиях.
-   - Минимум шума и низкая дестабилизация в рабочем процессе AI.
-3. `СКОРОСТЬ`
-   - Минимальная латентность (input -> frame).
-   - Два режима рендера: `cpu` и `gpu` + `auto`.
-   - Контролируемое потребление RAM/CPU.
+## The contract (hard rules)
 
-## 1.1) Product Persona and Compatibility Intent
-- Пользователь v1.0: визуальный продуктовый владелец и AI CLI power-user с длительными сессиями.
-- Shell policy: дефолтно `fish + starship`; допускается fallback `zsh`.
-- Bash не является целевым shell для v1.0 на Linux/macOS; совместимость базовых ANSI/terminal-сценариев обязательна.
-- Критичные сценарии AI: prompt latency, paste latency, корректный scrollback, отсутствие цветовых/курсорных артефактов.
+1. **zsh-first.** The shell baseline is zsh on macOS (Apple Silicon primary)
+   and Ubuntu servers. Fish support was retired in 3.0.0 — do not reintroduce
+   fish configs or `chsh` steps.
+2. **Local machines write and check code only.** No docker/colima/k8s-local,
+   no service hosting, no database installs — services run on remote servers.
+   Anything violating this is rejected regardless of how popular the tool is.
+3. **Evidence or it doesn't ship.** Every verdict in `TOOLKIT.md` carries a
+   version current as of its sweep date and a primary source. Refresh verdicts
+   with fresh registry/GitHub evidence; never from memory or blog folklore.
+4. **Agent-fit is a first-class criterion.** Tools must behave on pipes
+   (no pagers, clean exit codes, ideally `--json`); the neutralization gate in
+   `configs/zsh/.zshrc` is the canonical pattern and must stay the first thing
+   an interactive zsh evaluates.
+5. **Five harnesses are the audience:** Claude Code (`cl`), Codex (`cx`),
+   OpenCode (`oc`), Antigravity (`agy`), MiMoCode (`mimo`). Launchers are real
+   executables from the control plane — never shell aliases here.
+6. **No duplication of the module.** LSPs, linters, type checkers, AI-CLI pins
+   live in `rldyour-new-mac-or-ubuntu`; this repo curates the terminal layer
+   (shell stack, prompt, history, finders, TUIs, structured-data CLIs).
+7. **English everywhere;** Conventional Commits; sole-authored commits without
+   `Co-Authored-By` trailers; never rewrite pushed history.
 
-## 1.2 OS Scope and Delivery Stage
-- v1.0.0: Linux (Ubuntu 22.04 LTS, 24.04 LTS, 25.10, поддержка Debian-пакетной экосистемы), macOS.
-- Windows: отдельный архитектурный слой и адаптер в `foundation`, включение полной функциональности после v1.0.
-- Будущее расширение ОС не влияет на функциональные гейты v1.0.
+## Layout
 
-## 2) VSA Архитектурная модель (обязательная)
-- `foundation/`: адаптеры ОС и интеграции (PTY, window/event loop, clipboard, env hooks).
-- `core/`: доменная модель терминала (grid/state/parser/events), без зависимостей от OS API.
-- `services/`: оркестрация сессий, режимов рендера, retry/fallback и контролируемого завершения.
-- `features/`: модульные возможности (render.cpu, render.gpu, settings.ui, shell-integration, diagnostics).
-- `ui/`: визуальное поведение на основе сервисных контрактов.
-- `app/`: CLI и сборка бинарей.
+| Path | Meaning |
+|---|---|
+| `TOOLKIT.md` | Verdict tables + cut list + agent-fit rules (the spec core) |
+| `Brewfile` | The curated terminal set, installable via `brew bundle` |
+| `configs/zsh/` | `.zshenv` / `.zprofile` / `.zshrc` / `.zsh_plugins.txt` reference |
+| `configs/starship/` | Prompt profiles (docker/k8s segments deliberately absent) |
+| `rldyourterm/` | Parked GPU terminal engine, pinned at its last main (`550d78f`) |
+| `planning/`, `metrics/` | Historical v1.0 engine design corpus — see `planning/HISTORICAL.md`; do not "modernize" |
 
-## 2.1) Правила зависимостей
-- Зависимости только внутрь:
-  - `app -> features -> services -> core`
-  - `foundation` подключается через explicit adapter trait-port interfaces в `foundation/api`.
-- Прямой импорт `core` в `foundation` запрещён.
-- Любые внешние crates в  v1.0 подключаются только через адаптеры.
+## Working here
 
-## 3) Hard Constraints v1.0 (не изменяются без ADR)
-- Поддержка трёх render режимов: `cpu`, `gpu`, `auto`.
-- Автопереключение `auto`: GPU first, затем bounded retry, затем CPU.
-- In-terminal настройки обязательны как primary UX (`Ctrl/Cmd + Shift + P`).
-- Ограничение сложности: базовый терминал один tab/окно в v1.0.
-- Debug mode for diagnostics: по умолчанию выключен, включается runtime-командой и фиксируется в событии журнала.
-- Схема метрик: structured logs + event-id + trace correlation для сбоев GPU/PTY/window.
-- Лимит строки состояния: целевой максимум 50_000 строк scrollback в v1.0.
-
-## 4) Stability/Performance Governance
-- GPU failure не падает на core loop.
-- `GPU -> CPU` fallback всегда логируется и приводит к уведомлению пользователя.
-- Любое падение, restart, fallback — наблюдаемое событие через `trace` и `diagnostics`.
-
-## 5) Работа с документами и релизом
-- Перед переходом к коду фиксируется документационный lock:
-  - `planning/discovery/v1.0.0-answer-lock.md`
-  - `planning/v1.0.0-development-blueprint.md`
-  - `planning/architecture/adr-0001-layer-boundaries.md`
-  - `planning/adr/0002-pty-strategy.md`
-  - `planning/adr/0003-render-fallback.md`
-  - `planning/adr/0004-settings-command-palette.md`
-  - `planning/stack/v1.0.0-module-integration-contracts.md`
-  - `planning/quality/v1.0.0-quality-gates.md`
-  - `planning/risk/v1.0.0-risk-matrix.md`
-- Ветвление и финальные этапы без CI: только manual test pack и ручной QA.
-- Версия v1.0.0 должна быть консистентно зафиксирована во всех `metrics/version/1.0.0/*.md`.
-
-## 6) Non-goals v1.0.0 (запрещено по умолчанию)
-- Multiplexer-режим в v1.0.0.
-- Полноценные windows/мульти-оконные сценарии в v1.0.0.
-- Расширенные визуальные эффекты (blur/shadow/gradients) в v1.0.0.
-- Внешние файлы-конфиги как первичный путь настройки.
+- Verdict refresh = edit `TOOLKIT.md` + `Brewfile` together, cite evidence in
+  the commit body, bump `VERSION` (patch), tag after merge.
+- Config changes must keep `zsh -n` clean and the agent gate semantics intact.
+- The `rldyourterm` submodule advances only by explicit owner decision; its
+  internal state (detached HEAD) is normal.

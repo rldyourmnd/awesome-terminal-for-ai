@@ -1,110 +1,69 @@
-# rldyourterm
+# awesome-terminal-for-ai
 
-## Overview
+![banner](docs/assets/banner.svg)
 
-`rldyourterm` is a high-performance terminal platform with a strong focus on:
+**The zsh-first terminal toolkit for AI-agent workflows** — evidence-based
+verdicts on the best terminal tooling as of **July 2026**, a curated
+`Brewfile`, and reference zsh configs with a built-in **agent-neutralization
+gate** so five AI CLI harnesses (Claude Code, Codex, OpenCode, Antigravity,
+MiMoCode) get clean pipes while humans get a fast, beautiful shell.
 
-- low-latency rendering and smooth input/output
-- cross-platform consistency (Linux, macOS, Windows)
-- GPU-accelerated graphics pipeline
-- operational reliability for daily and production workflows
+Design constraints this spec is built around:
 
-It combines a terminal engine, configuration model, launcher scripts, and
-distribution workflow in a single repository.
+- **Local machines write and check code.** Linters, LSPs, type checkers,
+  formatters, quality gates — yes. Docker, local clusters, service hosting —
+  no; everything runs on remote servers.
+- **Agents are first-class terminal users.** Every pick is judged on pipe
+  behavior, JSON output, exit-code discipline and startup latency, not just
+  human ergonomics.
+- **Evidence over folklore.** Verdicts carry versions from a primary-source
+  GitHub/registry sweep (2026-07-07) — see [`TOOLKIT.md`](TOOLKIT.md).
 
-## Repository Purpose
-
-This repository delivers a production-ready terminal distribution and maintenance
-framework, including:
-
-- terminal source and CLI tooling
-- runtime packaging and release automation
-- platform-aware installers and health checks
-- documentation, reference guides, and operational runbooks
-
-The project is intentionally pragmatic: stable defaults, predictable upgrades, and
-repeatable setup for local and team usage.
-
-## Design Pillars
-
-### Performance and Stability
-
-- Minimized startup and interaction latency through Rust-centered architecture.
-- GPU rendering path for advanced graphics workloads.
-- Deterministic startup/install flow with explicit health checks.
-- Careful dependency pinning and regular lockfile hygiene.
-
-### Cross-Platform Engineering
-
-- Separate platform layers with shared orchestration.
-- Native script entrypoints for Linux, macOS, and Windows.
-- Consistent configuration and validation model across all targets.
-
-### Developer Velocity
-
-- Clear folder layout for tooling, configuration, docs, and release operations.
-- Reproducible environment bootstrap steps.
-- Structured contributor guidance and security/documentation standards.
-
-## Getting Started
-
-Clone the repository and run:
+## Quickstart
 
 ```bash
-git clone https://github.com/rldyourmnd/rldyourterm.git
-cd rldyourterm
+brew bundle --file Brewfile        # the curated terminal layer
+# review, then adopt the reference configs:
+cp configs/zsh/.zshenv  ~/.zshenv
+cp configs/zsh/.zprofile ~/.zprofile
+cp configs/zsh/.zshrc   ~/.zshrc
+cp configs/zsh/.zsh_plugins.txt ~/.zsh_plugins.txt
+mkdir -p ~/.config && cp configs/starship/starship.toml ~/.config/starship.toml
 ```
 
-Use the platform-specific installer/health scripts under `scripts/`:
+Full workstation provisioning (LSP fleet, linters, pinned AI CLIs, browser
+providers) is owned by
+[`rldyour-new-mac-or-ubuntu`](https://github.com/NDDev-it-com/rldyour-new-mac-or-ubuntu);
+harness configs by
+[`rldyour-ai-cli-tools`](https://github.com/NDDev-it-com/rldyour-ai-cli-tools).
+This repo is the terminal-layer spec on top of them.
 
-- `./scripts/install.sh` for Linux/macOS dispatcher entry
-- `.\scripts\install.ps1` on Windows
-- `./scripts/health-check.sh` or platform-specific equivalents
+## Highlights (July 2026)
 
-Run dry-run mode first to validate environment before applying changes.
+| Layer | Verdict |
+|---|---|
+| Emulator | **Ghostty 1.3** (scrollback search, agent-log throughput) |
+| Shell stack | zsh + **antidote** + autosuggestions + fzf-tab + syntax-highlighting (last) |
+| Prompt / history | **starship** · **atuin** (daemon, sqlite self-host, no Docker) |
+| Find / navigate | **fzf** · **zoxide** · **yazi** · **lazygit** |
+| Structured data | **jq** (canonical) + jaq sidecar · **yq** · **DuckDB** · jnv |
+| Agent-native | **ast-grep** · **repomix** · xh (`--curl`) · scc · delta (+`git dft`) |
+| Sessions | tmux 3.7 on servers; none needed locally |
 
-## Project Structure
+The full tables, runner-ups, cut list (httpie, dasel, powerlevel10k, zinit,
+zsh-autocomplete, WezTerm, Warp…) and agent-fit rules live in
+[`TOOLKIT.md`](TOOLKIT.md).
 
-```text
-.
-├── rldyourterm/                    # Terminal source (submodule content)
-├── scripts/                        # Installers, health checks, launch helpers
-├── docs/                           # Architecture and usage documentation
-├── wiki/                           # Extended operational knowledge base
-├── configs/                        # Default configuration layers
-└── .github/                        # CI and contribution workflows
-```
+## The engine that lives here
 
-## Versioning
-
-The repository is currently aligned to `1.0.0` and targets stable, backward-consistent upgrades.
-
-## Build and Run
-
-Build commands are defined in `Makefile` and platform scripts. For a regular workspace
-build from inside `rldyourterm`:
-
-```bash
-cd rldyourterm
-cargo build --workspace --release
-```
-
-Check release notes and operational runbooks in `docs/operations/` before upgrading major
-dependencies or toolchain baselines.
-
-## Release
-
-- `docs/operations/release.md`
-
-## Contributing
-
-- Review `CONTRIBUTING.md` and `SECURITY.md`.
-- Open issues and follow project-specific triage guidance in repository docs.
-- Align changes with existing naming, scripting, and documentation standards.
+[`rldyourterm/`](https://github.com/rldyourmnd/rldyourterm) — a from-scratch
+GPU terminal engine (Rust · portable-pty · winit · wgpu, 15 crates) built to a
+stability-first contract, parked at its MVP (`550d78f`, 2026-03). The v1.0
+design corpus is preserved under [`planning/`](planning/HISTORICAL.md) as
+engineering history. Daily-driver verdict meanwhile: Ghostty.
 
 ## License
 
-See `LICENSE`.
-
-Version: 1.0.0
-Special thanks to the original WezTerm authors and contributors (MIT licensed) for the architectural foundation that inspired this project.
+MIT for this specification repo; the `rldyourterm` engine carries its own
+license. See [`LICENSE`](LICENSE), [`SECURITY.md`](SECURITY.md),
+[`CONTRIBUTING.md`](CONTRIBUTING.md).

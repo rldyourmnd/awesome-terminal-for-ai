@@ -15,8 +15,6 @@ $git_branch\
 $git_commit\
 $git_state\
 $git_status\
-$docker_context\
-$kubernetes\
 $package\
 $c\
 $cpp\
@@ -211,17 +209,6 @@ style = "italic fg:mauve"
 [[battery.display]]
 threshold = 100
 style = "italic fg:green"
-
-[docker_context]
-symbol = " "
-format = "[docker $symbol$context ]($style)"
-style = "bold fg:blue"
-
-[kubernetes]
-disabled = false
-symbol = "󱃾 "
-format = "[k8s $symbol$context( \\($namespace\\)) ]($style)"
-style = "bold fg:blue"
 
 [aws]
 disabled = false
