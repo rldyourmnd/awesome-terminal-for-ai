@@ -1,32 +1,28 @@
 ---
-name: Feature Request
-about: Suggest a new feature or tool
-title: '[FEATURE] '
+name: Tool Proposal
+about: Propose a tool for the toolkit or challenge a current verdict
+title: '[TOOL] '
 labels: enhancement
 assignees: ''
 ---
 
-## Is your feature request related to a problem?
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## Tool
 
-## Describe the solution you'd like
-A clear and concise description of what you want to happen.
+Name, repo/registry link, current version @ date.
 
-## Proposed Tool (if applicable)
-- **Tool Name**:
-- **Repository URL**:
-- **Benchmark Score** (if known):
+## Category and displaced incumbent
 
-## Describe alternatives you've considered
-A clear and concise description of any alternative solutions or features you've considered.
+Which TOOLKIT.md category; which current pick it challenges and why.
 
-## Which layer would this belong to?
-- [ ] Foundation
-- [ ] Layer 1 (File Operations)
-- [ ] Layer 2 (Productivity)
-- [ ] Layer 3 (GitHub & Git)
-- [ ] Layer 4 (Code Intelligence)
-- [ ] New Layer
+## Evidence
 
-## Additional Context
-Add any other context or screenshots about the feature request here.
+Release cadence, benchmarks, adoption — primary sources.
+
+## Agent-fit
+
+Pipe behavior, pager use, `--json`/plain output, exit codes, startup latency.
+
+## Philosophy check
+
+- [ ] Not docker/local-stack/service-hosting tooling
+- [ ] Fits "local = write + check code"

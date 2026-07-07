@@ -1,40 +1,24 @@
 ---
 name: Bug Report
-about: Report a bug to help us improve
+about: A config, verdict, or doc in this spec is wrong or broken
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## Bug Description
-A clear and concise description of what the bug is.
+## What is wrong
 
-## Steps to Reproduce
-1. Run command '...'
-2. See error
+Describe the problem (broken config line, incorrect verdict, dead link).
 
-## Expected Behavior
-A clear and concise description of what you expected to happen.
+## Where
 
-## Actual Behavior
-A clear and concise description of what actually happened.
+File and line (e.g. `configs/zsh/.zshrc:12`, `TOOLKIT.md` row).
 
-## Environment
-- OS: [e.g., Ubuntu 22.04]
-- Shell: [e.g., Fish 4.0.6]
-- Terminal: [e.g., rldyourterm]
+## Evidence
 
-## Installation Layer
-- [ ] Foundation
-- [ ] Layer 1 (File Operations)
-- [ ] Layer 2 (Productivity)
-- [ ] Layer 3 (GitHub & Git)
-- [ ] Layer 4 (Code Intelligence)
+For verdict disputes: current version @ date + primary source link.
 
-## Logs/Output
-```
-Paste any relevant logs here
-```
+## Environment (for config bugs)
 
-## Additional Context
-Add any other context about the problem here.
+- OS / shell: [e.g. macOS 15 arm64, zsh 5.9]
+- Harness involved, if any: [cl / cx / oc / agy / mimo / none]

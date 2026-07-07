@@ -1,36 +1,17 @@
-## Description
-Please include a summary of the changes and the related issue. Please also include relevant motivation and context.
+# Pull Request
 
-Fixes # (issue)
+## What changed
 
-## Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Configuration improvement
+-
 
-## Testing
-Please describe the tests that you ran to verify your changes.
+## Evidence (required for TOOLKIT/Brewfile changes)
 
-- [ ] Tested on Ubuntu/Debian
-- [ ] Installation script runs successfully
-- [ ] All layers install correctly
+- Version @ date:
+- Primary source (release page / registry / repo activity):
 
-## Checklist
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have checked my code and corrected any misspellings
+## Checks
 
-## Affected Layers
-- [ ] Foundation
-- [ ] Layer 1
-- [ ] Layer 2
-- [ ] Layer 3
-- [ ] Layer 4
-
-## Screenshots (if applicable)
-Add screenshots to help explain your changes.
+- [ ] `zsh -n` clean on any touched `configs/zsh/*`
+- [ ] `npx markdownlint-cli2 "**/*.md"` clean
+- [ ] Agent-fit considered (pipes, pagers, exit codes, `--json`)
+- [ ] No docker/local-stack tooling introduced
