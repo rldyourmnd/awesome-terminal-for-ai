@@ -8,7 +8,7 @@ comes from explicit pinning.
 
 | Version | Supported |
 | --- | --- |
-| Current exact tag `3.0.0` | yes |
+| Current exact tag `3.1.0` | yes |
 | The `3.x` line label tracks only the latest released patch | no |
 | Pre-3.0.0 history (fork-era tags `v1.x`/`v2.x`) | no |
 

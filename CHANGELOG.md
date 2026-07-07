@@ -6,6 +6,17 @@ The project follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-07-07
+
+### Added
+
+- Classic-command replacement map (2026-07 wave) in TOOLKIT.md and the
+  matching visible-expansion abbr block in `configs/zsh/.zshrc`: dust/dua,
+  duf, procs, btop, doggo, gping, hexyl, viddy; `sd` and tealdeer under
+  their own names. Policy codified: never shadow grep/sed/awk/find/jq.
+- Brewfile: the introspection/network wave (11 formulas); tealdeer replaces
+  the deprecated brew `tldr` C-client.
+
 ## [3.0.0] - 2026-07-07
 
 The zsh-first rebirth. The repository's identity changes from "terminal
@@ -77,6 +88,7 @@ zsh-first spec era.
 
 ---
 
-[Unreleased]: https://github.com/rldyourmnd/awesome-terminal-for-ai/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/rldyourmnd/awesome-terminal-for-ai/compare/3.1.0...HEAD
+[3.1.0]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/3.1.0
 [3.0.0]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/3.0.0
 [1.0.0]: https://github.com/rldyourmnd/awesome-terminal-for-ai/releases/tag/v1.0.0

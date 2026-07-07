@@ -61,6 +61,33 @@ plus this repo's [`Brewfile`](Brewfile).
 | skim, gitui, fx, tokei, curlie | fzf, lazygit, jnv, scc, xh | Cadence/ecosystem gaps. |
 | fish (here) | zsh | Owner contract is zsh-first — see `configs/zsh/`. |
 
+## Classic-command replacement map (2026-07 wave)
+
+Aliases live only in interactive zsh (section 7 of `configs/zsh/.zshrc`, after
+the agent gate) — agents are structurally unaffected and get every tool on
+PATH under its own name. Policy: `alias` only for view-layer supersets;
+`abbr` (visible expansion) for replacements; **never** shadow grep/sed/awk/
+find/jq — rg is deliberately non-POSIX and skips ignored files silently
+(its own FAQ), and sd's positional CLI cannot host sed programs.
+
+| Classic | Replacement | Form | Notes |
+|---|---|---|---|
+| `du` | **dust** 1.2 / **dua** 2.37 (`dua i`) | abbr | report lane / interactive delete walk |
+| `df` | **duf** 0.9 | abbr | cadence slow (2025-09) but domain-stable |
+| `ps` | **procs** 0.14 | abbr | real `ps` stays for scripts |
+| `top`/`htop` | **btop** 1.4 (runner-up: bottom) | abbr | human TUI only |
+| `dig` | **doggo** 1.2 | abbr | `dog` is dead — brew formula deleted |
+| `ping` | **gping** 1.20 | abbr | `command ping` for raw ICMP flags |
+| `xxd` | **hexyl** 0.17 | abbr | viewing only; `xxd -r` has no peer |
+| `watch` | **viddy** 1.3 | abbr | macOS ships no watch(1); watchexec = file-event lane, unchanged |
+| `sed`-adjacent | **sd** 1.1 | own name | NEVER aliased — semantics differ |
+| tldr client | **tealdeer** 1.8 | own name (`tldr`) | brew `tldr` C-client deprecated+disabled upstream |
+| `tree`/`cloc`/`cd`/`cat` | eza --tree / scc / zoxide / bat | settled | earlier verdicts |
+| rejected | gdu, navi (stale >1y), dog (dead), choose (stale) | — | one niche, one tool |
+
+semgrep (1.168, security/SAST lane — lives in the workstation module) and
+ast-grep (structural lane) are confirmed complementary, not substitutes.
+
 ## Agent-fit ground rules
 
 1. **Pagers are the #1 agent-breaker.** The neutralization block in
